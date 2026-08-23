@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: python -m pip install --upgrade pip numpy beautifulsoup4 lxml sentence-transformers scikit-learn
       - name: Run AP-RS6
-        run: python experiments/ap_rs6_visible_only_policy.py
+        run: python -m experiments.ap_rs6_visible_only_policy
       - name: Stage results
         run: |
           cp artifacts/ap_rs6/AP_RS6_RESULTS.json results/AP_RS6_RESULTS.json
