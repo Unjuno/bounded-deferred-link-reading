@@ -1,0 +1,186 @@
+{
+  "phase": "AP-RS5",
+  "name": "real anchor/context causal bounded-deferred-link policy",
+  "decision": "FAIL",
+  "preregistered_conditions": {
+    "test_n_ge_400": true,
+    "visible_edge_coverage_ge_0.85": true,
+    "S16_gain_ge_2pp": false,
+    "S16_target_CI_lower_gt_0": false,
+    "S16_positive_target_buckets_ge_6_of_8": false,
+    "S32_mean_noninferior_minus_0_5pp": true,
+    "S32_target_CI_lower_ge_minus_1pp": true
+  },
+  "construct": "real Wikispeedia HTML anchor + containing paragraph, real hyperlink graph, real human mission distribution; simulated policy outcome",
+  "data": {
+    "graph_url": "https://snap.stanford.edu/data/wikispeedia/wikispeedia_paths-and-graph.tar.gz",
+    "html_url": "https://snap.stanford.edu/data/wikispeedia/wikispeedia_articles_html.tar.gz",
+    "articles": 4604,
+    "graph_links": 119882,
+    "unique_missions": 28707,
+    "visible_edge_coverage": 0.9672844964214812,
+    "unique_anchor_strings": 11765,
+    "unique_context_strings": 74087
+  },
+  "split": {
+    "target_disjoint": true,
+    "fit_tasks": 700,
+    "tune_tasks": 500,
+    "test_tasks": 1200,
+    "fit_targets": 1330,
+    "tune_targets": 665,
+    "test_targets": 1331
+  },
+  "scorer": {
+    "encoder": "sentence-transformers/all-MiniLM-L6-v2",
+    "equal_weight": {
+      "anchor": 0.5,
+      "containing_paragraph": 0.5
+    },
+    "weight_retuned": false
+  },
+  "teacher": {
+    "budget": 16,
+    "rows": 19460,
+    "non_tie_rows": 3375,
+    "non_tie_sign_auc_fit": 0.701227224046334,
+    "features": [
+      "log1p(candidate_outdegree)",
+      "log1p(origin_candidate_count)",
+      "relative_semantic_score"
+    ]
+  },
+  "tuning": {
+    "safety_constraint": "mean S@32 harm <= 0.5pp on tune targets",
+    "grid": [
+      {
+        "margin": -0.2,
+        "d16": -0.03,
+        "d32": 0.002,
+        "intervention_rate": 0.926
+      },
+      {
+        "margin": -0.1,
+        "d16": -0.022,
+        "d32": 0.01,
+        "intervention_rate": 0.848
+      },
+      {
+        "margin": -0.05,
+        "d16": -0.02,
+        "d32": 0.014,
+        "intervention_rate": 0.736
+      },
+      {
+        "margin": 0.0,
+        "d16": -0.014,
+        "d32": 0.01,
+        "intervention_rate": 0.45
+      },
+      {
+        "margin": 0.02,
+        "d16": 0.002,
+        "d32": 0.012,
+        "intervention_rate": 0.17
+      },
+      {
+        "margin": 0.05,
+        "d16": -0.002,
+        "d32": 0.002,
+        "intervention_rate": 0.022
+      },
+      {
+        "margin": 0.1,
+        "d16": 0.0,
+        "d32": 0.0,
+        "intervention_rate": 0.0
+      },
+      {
+        "margin": 0.2,
+        "d16": 0.0,
+        "d32": 0.0,
+        "intervention_rate": 0.0
+      },
+      {
+        "margin": 0.4,
+        "d16": 0.0,
+        "d32": 0.0,
+        "intervention_rate": 0.0
+      },
+      {
+        "margin": 999.0,
+        "d16": 0.0,
+        "d32": 0.0,
+        "intervention_rate": 0.0
+      }
+    ],
+    "selected_margin": 0.02
+  },
+  "test": {
+    "local_modes": {
+      "anchor": {
+        "S16": 0.7908333333333334,
+        "S32": 0.8458333333333333
+      },
+      "context": {
+        "S16": 0.38083333333333336,
+        "S32": 0.5333333333333333
+      },
+      "equal": {
+        "S16": 0.7425,
+        "S32": 0.8275
+      }
+    },
+    "bounded_policy": {
+      "S16": 0.7475,
+      "S32": 0.8325,
+      "delta_S16": 0.005,
+      "delta_S32": 0.005,
+      "target_cluster_CI95_S16": [
+        -0.004340561085726719,
+        0.014529455777364404
+      ],
+      "target_cluster_CI95_S32": [
+        -0.00317707115579456,
+        0.013158165475416934
+      ],
+      "target_bucket_S16": {
+        "means": [
+          0.0,
+          -0.01775147928994083,
+          0.005917159763313609,
+          0.014492753623188406,
+          0.014814814814814815,
+          0.006134969325153374,
+          0.03875968992248062,
+          -0.012658227848101266
+        ],
+        "positive": 5,
+        "u_c": 0.00622630801864548,
+        "U_k1.96": 0.01220356371654514
+      },
+      "target_bucket_S32": {
+        "means": [
+          0.0,
+          0.0,
+          0.011834319526627219,
+          0.007246376811594203,
+          -0.014814814814814815,
+          0.006134969325153374,
+          0.015503875968992248,
+          0.012658227848101266
+        ],
+        "positive": 5,
+        "u_c": 0.003444433657625672,
+        "U_k1.96": 0.006751089968946317
+      },
+      "intervention_rate": 0.19666666666666666
+    }
+  },
+  "boundary": [
+    "This is the first causal multi-hop policy test here using visible real anchor + containing-context semantics.",
+    "Mission pairs come from human Wikispeedia, but policy trajectories are simulated.",
+    "The result is not a human comprehension/retention effect.",
+    "A sidebar agent that prefetches candidate-page content would define a different information regime and should be tested separately."
+  ]
+}
