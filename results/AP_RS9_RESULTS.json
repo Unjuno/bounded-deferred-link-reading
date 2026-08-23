@@ -1,0 +1,165 @@
+{
+  "phase": "AP-RS9",
+  "name": "wrong-turn-triggered visible branch-switch policy",
+  "decision": "FAIL",
+  "preregistered_conditions": {
+    "test_n_ge_400": true,
+    "visible_edge_coverage_ge_0.85": true,
+    "body_coverage_ge_0.90": true,
+    "S16_gain_ge_2pp": false,
+    "S16_target_CI_lower_gt_0": false,
+    "S16_positive_target_buckets_ge_6_of_8": false,
+    "S32_mean_noninferior_minus_0_5pp": true,
+    "S32_target_CI_lower_ge_minus_1pp": true
+  },
+  "construct": "real Wikispeedia visible anchor+paragraph local scoring plus visited-page body semantic regression trigger; simulated navigation",
+  "data": {
+    "articles": 4604,
+    "graph_links": 119882,
+    "unique_missions": 28707,
+    "visible_edge_coverage": 0.9672844964214812,
+    "body_coverage": 1.0
+  },
+  "split": {
+    "target_disjoint": true,
+    "tune_tasks": 600,
+    "test_tasks": 1600,
+    "tune_targets": 997,
+    "test_targets": 2329,
+    "seed": 20260826
+  },
+  "scoring": {
+    "link_score": "0.5 anchor MiniLM cosine + 0.5 containing-paragraph MiniLM cosine to target title",
+    "wrong_turn_signal": "visited-current body cosine to target title minus visited-parent body cosine",
+    "unvisited_destination_metadata_used": false,
+    "K_deferred": 4,
+    "max_discretionary_returns": 1
+  },
+  "tuning": {
+    "trigger_rule": "body_progress < -tau",
+    "tau_grid": [
+      0.0,
+      0.005,
+      0.01,
+      0.02,
+      0.04,
+      0.08,
+      0.12,
+      999.0
+    ],
+    "safety_constraint": "mean S@32 harm <= 0.5pp on tune targets",
+    "grid": [
+      {
+        "tau": 0.0,
+        "d16": -0.03,
+        "d32": -0.008333333333333333,
+        "intervention_rate": 0.7
+      },
+      {
+        "tau": 0.005,
+        "d16": -0.023333333333333334,
+        "d32": -0.011666666666666667,
+        "intervention_rate": 0.69
+      },
+      {
+        "tau": 0.01,
+        "d16": -0.025,
+        "d32": -0.01,
+        "intervention_rate": 0.6866666666666666
+      },
+      {
+        "tau": 0.02,
+        "d16": -0.028333333333333332,
+        "d32": -0.008333333333333333,
+        "intervention_rate": 0.6583333333333333
+      },
+      {
+        "tau": 0.04,
+        "d16": -0.023333333333333334,
+        "d32": -0.0016666666666666668,
+        "intervention_rate": 0.6033333333333334
+      },
+      {
+        "tau": 0.08,
+        "d16": -0.021666666666666667,
+        "d32": 0.0016666666666666668,
+        "intervention_rate": 0.485
+      },
+      {
+        "tau": 0.12,
+        "d16": -0.011666666666666667,
+        "d32": 0.005,
+        "intervention_rate": 0.34
+      },
+      {
+        "tau": 999.0,
+        "d16": 0.0,
+        "d32": 0.0,
+        "intervention_rate": 0.0
+      }
+    ],
+    "selected": {
+      "tau": 999.0,
+      "d16": 0.0,
+      "d32": 0.0,
+      "intervention_rate": 0.0
+    }
+  },
+  "test": {
+    "local": {
+      "S16": 0.74375,
+      "S32": 0.829375
+    },
+    "policy": {
+      "S16": 0.74375,
+      "S32": 0.829375,
+      "delta_S16": 0.0,
+      "delta_S32": 0.0,
+      "target_cluster_CI95_S16": [
+        0.0,
+        0.0
+      ],
+      "target_cluster_CI95_S32": [
+        0.0,
+        0.0
+      ],
+      "target_bucket_S16": {
+        "means": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "positive": 0,
+        "u_c": 0.0,
+        "U_k1.96": 0.0
+      },
+      "target_bucket_S32": {
+        "means": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "positive": 0,
+        "u_c": 0.0,
+        "U_k1.96": 0.0
+      },
+      "intervention_rate": 0.0
+    }
+  },
+  "boundary": [
+    "RS4e motivated the trigger but was exploratory; AP-RS9 uses new target-disjoint tune/test missions and a fixed rule family.",
+    "Current-page body content is only used after visiting that page; no unvisited page body or degree is used.",
+    "Reading time required to form a body-semantic representation is not modeled.",
+    "Outcome is simulated goal-directed navigation, not human comprehension or retention."
+  ]
+}
