@@ -1,0 +1,187 @@
+{
+  "phase": "AP-RS10",
+  "name": "bounded visited-memory audit",
+  "decision": "FAIL",
+  "preregistered_conditions": {
+    "test_n_ge_2000": true,
+    "visible_edge_coverage_ge_0.85": true,
+    "recent4_S16_mean_loss_le_0_5pp": false,
+    "recent4_S16_CI_lower_ge_minus_1pp": false,
+    "recent4_S32_mean_loss_le_0_5pp": false,
+    "recent4_S32_CI_lower_ge_minus_1pp": false
+  },
+  "construct": "real Wikispeedia anchor-only greedy navigation; audit of cycle-avoidance memory only",
+  "data": {
+    "test_tasks": 6000,
+    "articles": 4604,
+    "graph_links": 119882,
+    "visible_edge_coverage": 0.9672844964214812
+  },
+  "policy": {
+    "link_scorer": "anchor MiniLM cosine to target title",
+    "visited_memory_modes": [
+      "full",
+      "recent4",
+      "recent1",
+      "none"
+    ],
+    "no_model_fit": true
+  },
+  "results": {
+    "S16": {
+      "full": 0.7833333333333333,
+      "recent4": {
+        "success": 0.7398333333333333,
+        "delta_vs_full": -0.0435,
+        "target_cluster_CI95": [
+          -0.05027946597815365,
+          -0.03717451982651797
+        ],
+        "target_buckets": {
+          "means": [
+            -0.04638472032742155,
+            -0.035326086956521736,
+            -0.042735042735042736,
+            -0.0607661822985469,
+            -0.047556142668428,
+            -0.03631647211413749,
+            -0.046176046176046176,
+            -0.0326975476839237
+          ],
+          "positive": 0,
+          "u_c": 0.0031784711734560806,
+          "U_k1.96": 0.006229803499973918
+        },
+        "mean_revisits": 1.3881666666666668
+      },
+      "recent1": {
+        "success": 0.59,
+        "delta_vs_full": -0.19333333333333333,
+        "target_cluster_CI95": [
+          -0.20613145092018123,
+          -0.18041042711979358
+        ],
+        "target_buckets": {
+          "means": [
+            -0.2100954979536153,
+            -0.14130434782608695,
+            -0.17582417582417584,
+            -0.21400264200792601,
+            -0.18229854689564068,
+            -0.19584954604409857,
+            -0.22077922077922077,
+            -0.2098092643051771
+          ],
+          "positive": 0,
+          "u_c": 0.009328574444026174,
+          "U_k1.96": 0.018284005910291303
+        },
+        "mean_revisits": 4.737333333333333
+      },
+      "none": {
+        "success": 0.588,
+        "delta_vs_full": -0.19533333333333333,
+        "target_cluster_CI95": [
+          -0.20781706580899165,
+          -0.1825600986499669
+        ],
+        "target_buckets": {
+          "means": [
+            -0.21282401091405184,
+            -0.14402173913043478,
+            -0.17704517704517705,
+            -0.21532364597093792,
+            -0.18626155878467635,
+            -0.19714656290531776,
+            -0.22366522366522368,
+            -0.2098092643051771
+          ],
+          "positive": 0,
+          "u_c": 0.009228483845465638,
+          "U_k1.96": 0.01808782833711265
+        },
+        "mean_revisits": 4.777333333333333
+      }
+    },
+    "S32": {
+      "full": 0.854,
+      "recent4": {
+        "success": 0.7505,
+        "delta_vs_full": -0.1035,
+        "target_cluster_CI95": [
+          -0.11422036896102108,
+          -0.09296102061390615
+        ],
+        "target_buckets": {
+          "means": [
+            -0.10504774897680765,
+            -0.08831521739130435,
+            -0.09645909645909646,
+            -0.12285336856010567,
+            -0.1202113606340819,
+            -0.09987029831387809,
+            -0.10678210678210678,
+            -0.0885558583106267
+          ],
+          "positive": 0,
+          "u_c": 0.0045974432373489344,
+          "U_k1.96": 0.009010988745203912
+        },
+        "mean_revisits": 5.102833333333334
+      },
+      "recent1": {
+        "success": 0.59,
+        "delta_vs_full": -0.264,
+        "target_cluster_CI95": [
+          -0.27948724642000605,
+          -0.24796426007259745
+        ],
+        "target_buckets": {
+          "means": [
+            -0.2810368349249659,
+            -0.19701086956521738,
+            -0.23809523809523808,
+            -0.2866578599735799,
+            -0.2628797886393659,
+            -0.2723735408560311,
+            -0.30158730158730157,
+            -0.276566757493188
+          ],
+          "positive": 0,
+          "u_c": 0.01165127118599896,
+          "U_k1.96": 0.022836491524557963
+        },
+        "mean_revisits": 11.295833333333333
+      },
+      "none": {
+        "success": 0.588,
+        "delta_vs_full": -0.266,
+        "target_cluster_CI95": [
+          -0.28247156785682537,
+          -0.2511624088509106
+        ],
+        "target_buckets": {
+          "means": [
+            -0.2837653478854025,
+            -0.19972826086956522,
+            -0.23931623931623933,
+            -0.28797886393659183,
+            -0.2668428005284016,
+            -0.27367055771725035,
+            -0.30447330447330445,
+            -0.276566757493188
+          ],
+          "positive": 0,
+          "u_c": 0.011612560212396598,
+          "U_k1.96": 0.02276061801629733
+        },
+        "mean_revisits": 11.367833333333333
+      }
+    }
+  },
+  "boundary": [
+    "This audits visited-page memory, not the deferred-alternative buffer itself.",
+    "Recent-4 is O(1) in path depth; full visited-set is O(path length).",
+    "Goal-directed navigation remains distinct from human comprehension."
+  ]
+}
