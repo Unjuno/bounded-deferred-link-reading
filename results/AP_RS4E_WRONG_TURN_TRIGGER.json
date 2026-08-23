@@ -1,0 +1,46 @@
+{
+  "phase": "AP-RS4e",
+  "name": "exploratory semantic wrong-turn trigger analysis for one-step human BACK",
+  "status": "EXPLORATORY_NOT_PREREGISTERED",
+  "n_one_step_back_episodes": 3659,
+  "definitions": {
+    "prior_forward_progress": "sim(abandoned,target)-sim(parent,target) = -return_delta",
+    "semantic_regression": "prior_forward_progress < 0",
+    "replacement_correction": "sim(replacement,target)-sim(abandoned,target)"
+  },
+  "overall": {
+    "prior_forward_progress_mean": 0.02056770464206884,
+    "prior_forward_progress_positive_fraction": 0.5523367040174911,
+    "back_after_semantic_regression_fraction": 0.44766329598250887,
+    "replacement_correction_mean": 0.034750297313454775,
+    "replacement_correction_positive_fraction": 0.5176277671494944,
+    "replacement_vs_returned_parent_mean": 0.05531800195552362
+  },
+  "stratified": {
+    "after_semantic_regression": {
+      "n": 1638,
+      "replacement_correction_mean": 0.09266106025270335,
+      "replacement_positive_fraction": 0.6727716727716728,
+      "target_cluster_bootstrap_CI95_mean": [0.08461142731387529, 0.10109098539792578]
+    },
+    "after_semantic_progress": {
+      "n": 2021,
+      "replacement_correction_mean": -0.01218578863136916,
+      "replacement_positive_fraction": 0.39188520534388915,
+      "target_cluster_bootstrap_CI95_mean": [-0.018379987998768263, -0.00570824292894225]
+    }
+  },
+  "target_matched_difference": {
+    "targets_with_both_trigger_types": 568,
+    "mean_regression_minus_progress_replacement_correction": 0.11019748524059357,
+    "positive_target_fraction": 0.7235915492957746,
+    "target_bootstrap_CI95": [0.09423396, 0.12576196],
+    "u_target_bootstrap": 0.008223898467706157
+  },
+  "interpretation": "One-step human BACK is heterogeneous. When the immediately preceding click was a semantic wrong turn, the replacement branch is strongly corrective. When the preceding click already improved target-body similarity, the replacement is on average slightly worse than the abandoned page. This suggests that detecting wrong turns may be more important than encouraging BACK generically.",
+  "boundary": [
+    "Post-hoc exploratory analysis; not a preregistered causal test.",
+    "Semantic similarity is a navigation proxy, not comprehension.",
+    "The result motivates a wrong-turn detector for later agent-assisted experiments but does not prove that humans explicitly monitor this semantic variable."
+  ]
+}
