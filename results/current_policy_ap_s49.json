@@ -1,0 +1,31 @@
+{
+  "phase": "AP-S49",
+  "scope": "Chameleon spectral/non-distance navigation bridge; computational/hypothesis-generating, not human reading validation",
+  "public_repo_readiness": {
+    "computational_hypothesis_repo": "READY_WITH_SCOPE_WARNINGS",
+    "validated_human_reading_claim": "NOT_READY",
+    "missing_gates": [
+      "400+ independent real anchor/context semantic tasks",
+      "human comprehension/retention/working-memory experiment"
+    ]
+  },
+  "current_compact_bridge_policy": {
+    "local_context_first": true,
+    "history_window": "immediate previous decision point",
+    "candidate_memory_cap": 4,
+    "features": ["candidate_degree","origin_candidate_count","relative_score"],
+    "model": "frozen 3-feature Ridge counterfactual trajectory utility",
+    "margin": 0.05,
+    "max_discretionary_interventions": 1,
+    "preferred_reconsideration": "next decision point / TTL1",
+    "persistent_multi_page_retention": "not supported"
+  },
+  "resource_saving_variant": {
+    "mapping_by_branching_load": {"low":5,"medium":4,"high":3},
+    "mean_memory_reduction_vs_fixed4_fraction": 0.20874775358614595,
+    "S16_change_vs_fixed4_pp": -0.4333333333333333,
+    "S32_change_vs_fixed4_pp": -0.4,
+    "interpretation": "optional resource-saving tradeoff; not performance-improving"
+  },
+  "claim_boundary": "K≈4 and quick one-shot reconsideration are computational bridge findings; human cognitive optimality remains untested."
+}
