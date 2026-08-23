@@ -1,0 +1,30 @@
+name: AP-RS8 monitored PR run
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'experiments/ap_rs8_anchor_only_deferred_policy.py'
+      - '.github/workflows/ap-rs8-pr.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  ap-rs8-monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip numpy beautifulsoup4 lxml sentence-transformers scikit-learn
+      - name: Run AP-RS8
+        run: python -m experiments.ap_rs8_anchor_only_deferred_policy
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ap-rs8-monitored-results
+          path: artifacts/ap_rs8/
+          if-no-files-found: error
