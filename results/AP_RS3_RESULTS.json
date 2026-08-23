@@ -1,0 +1,109 @@
+{
+  "phase": "AP-RS3",
+  "encoder": "sentence-transformers/all-MiniLM-L6-v2",
+  "complete_title_coverage": true,
+  "construct": "real human Wikispeedia navigation + article-title semantics; not body/anchor/context semantics",
+  "RS3A_progress": {
+    "decision": "PASS",
+    "conditions": {
+      "n_ge_400": true,
+      "mean_gt_0": true,
+      "user_ci_lower_gt_0": true,
+      "target_ci_lower_gt_0": true,
+      "positive_paths_gt_half": true
+    },
+    "stats": {
+      "n": 28182,
+      "mean": 0.09156989848189828,
+      "median": 0.07174696152408919,
+      "sd": 0.0921102258512623,
+      "u_c": 0.0005486835525580512,
+      "positive_fraction": 0.9266198282591726,
+      "zero_fraction": 0.0006032219146973245,
+      "user_clusters": 10601,
+      "target_clusters": 3324,
+      "user_cluster_ci95": [
+        0.0903641257085936,
+        0.09289115313305794
+      ],
+      "target_cluster_ci95": [
+        0.08937341942312073,
+        0.09380703018368847
+      ]
+    },
+    "terminal_transition_excluded": true
+  },
+  "RS3B_backtrack_replacement": {
+    "decision": "FAIL",
+    "conditions": {
+      "n_ge_300": true,
+      "mean_gt_0": true,
+      "user_ci_lower_gt_0": true,
+      "target_ci_lower_gt_0": true,
+      "positive_paths_gt_half": false
+    },
+    "replacement_vs_abandoned": {
+      "n": 4301,
+      "mean": 0.014740825013162937,
+      "median": 0.0,
+      "sd": 0.14452527914805316,
+      "u_c": 0.002203733611501923,
+      "positive_fraction": 0.4857009997674959,
+      "zero_fraction": 0.10834689607068124,
+      "user_clusters": 2445,
+      "target_clusters": 2358,
+      "user_cluster_ci95": [
+        0.00923134037370476,
+        0.019555468915714747
+      ],
+      "target_cluster_ci95": [
+        0.010493952080180148,
+        0.01929084241120333
+      ]
+    },
+    "return_vs_abandoned": {
+      "n": 4301,
+      "mean": -0.02016613382189579,
+      "median": -0.015392109751701355,
+      "sd": 0.14768879526083545,
+      "u_c": 0.002251971171251761,
+      "positive_fraction": 0.44338525924203676,
+      "zero_fraction": 0.0013950244129272262,
+      "user_clusters": 2445,
+      "target_clusters": 2358,
+      "user_cluster_ci95": [
+        -0.0259647922213701,
+        -0.015167829163356458
+      ],
+      "target_cluster_ci95": [
+        -0.024750584375030363,
+        -0.01546026497587698
+      ]
+    },
+    "replacement_vs_returned_ancestor": {
+      "n": 4301,
+      "mean": 0.034906958835058725,
+      "median": 0.028872787952423096,
+      "sd": 0.15177077368822792,
+      "u_c": 0.0023142135216204836,
+      "positive_fraction": 0.5940478958381772,
+      "zero_fraction": 0.0,
+      "user_clusters": 2445,
+      "target_clusters": 2358,
+      "user_cluster_ci95": [
+        0.030414763644970942,
+        0.03941212881797685
+      ],
+      "target_cluster_ci95": [
+        0.030217306192245084,
+        0.03966841210107259
+      ]
+    },
+    "terminal_replacement_excluded": true,
+    "first_eligible_episode_only": true
+  },
+  "boundary": [
+    "Complete title-semantic coverage removes AP-RS0/RS2 pair-table missingness.",
+    "A PASS still would not validate article-body anchor/context semantics or human comprehension."
+  ]
+}
