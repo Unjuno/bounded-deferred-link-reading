@@ -28,3 +28,5 @@ jobs:
           name: ap-rs4-monitored-results
           path: artifacts/ap_rs4/
           if-no-files-found: error
+
+# monitored trigger 2026-08-24
