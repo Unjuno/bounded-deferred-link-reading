@@ -1,0 +1,59 @@
+{
+  "phase": "AP-S49",
+  "description": "Confirmatory adaptive candidate-memory budget under frozen AP-S43 compact trajectory gate",
+  "frozen_design": {
+    "load_proxy": "current page candidate count",
+    "thresholds": [1,4],
+    "task_demand_mapping": {"low":3,"medium":4,"high":5},
+    "capacity_sharing_mapping": {"low":5,"medium":4,"high":3},
+    "comparators": ["fixed4","fixed5"],
+    "features": ["candidate_degree","origin_candidate_count","relative_score"],
+    "margin": 0.05,
+    "max_interventions": 1,
+    "history": "immediate previous decision point"
+  },
+  "test": {
+    "seeds": [20450111,20450222,20450333,20450444,20450555,20450666,20450777,20450888,20450999,20451110,20451221,20451332],
+    "n_per_seed": 500,
+    "n_total": 6000
+  },
+  "effects_vs_local": {
+    "fixed4": {
+      "S16": {"mean":0.041,"ci95":[0.03133333333333333,0.05066666666666667],"positive_seed_fraction":1.0},
+      "S32": {"mean":0.010833333333333334,"ci95":[0.0013333333333333333,0.020504166666666608],"positive_seed_fraction":0.8333333333333334},
+      "mean_stored_alternatives_per_forward_page": 2.9874394174311294,
+      "mean_intervention_rate": 0.2001666666666667
+    },
+    "fixed5": {
+      "S16": {"mean":0.0425,"ci95":[0.032999999999999995,0.05166666666666667],"positive_seed_fraction":1.0},
+      "S32": {"mean":0.013166666666666667,"ci95":[0.004,0.022833333333333334],"positive_seed_fraction":0.9166666666666666},
+      "mean_stored_alternatives_per_forward_page": 3.535972549095595
+    },
+    "task_adaptive_345": {
+      "S16": {"mean":0.0425,"ci95":[0.03316666666666668,0.051833333333333335]},
+      "S32": {"mean":0.013166666666666667,"ci95":[0.003833333333333333,0.022833333333333334]},
+      "mean_stored_alternatives_per_forward_page": 3.535972549095595
+    },
+    "capacity_adaptive_543": {
+      "S16": {"mean":0.03666666666666667,"ci95":[0.027500000000000007,0.04549999999999999],"positive_seed_fraction":1.0},
+      "S32": {"mean":0.006833333333333334,"ci95":[-0.002166666666666666,0.016499999999999997],"positive_seed_fraction":0.75},
+      "mean_stored_alternatives_per_forward_page": 2.3638181500676767,
+      "mean_intervention_rate": 0.1805
+    }
+  },
+  "paired_minus_fixed4": {
+    "task_adaptive_345": {
+      "S16": {"mean":0.0015,"ci95":[-0.0003333333333333333,0.003666666666666667]},
+      "S32": {"mean":0.0023333333333333335,"ci95":[0.0,0.004666666666666667]}
+    },
+    "capacity_adaptive_543": {
+      "S16": {"mean":-0.004333333333333333,"ci95":[-0.007333333333333335,-0.0014958333333333937]},
+      "S32": {"mean":-0.004,"ci95":[-0.006333333333333333,-0.0018333333333333333]}
+    }
+  },
+  "decisions": {
+    "task_demand_adaptation": "UNCERTAIN",
+    "capacity_sharing": "SUPPORTED"
+  },
+  "scope_warning": "Computational spectral navigation bridge. Candidate count is task branching load, not measured human working-memory load."
+}
