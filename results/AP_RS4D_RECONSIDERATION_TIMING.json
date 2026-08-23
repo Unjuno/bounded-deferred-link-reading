@@ -1,0 +1,38 @@
+{
+  "phase": "AP-RS4d",
+  "name": "exploratory timing of first human BACK and semantic correction",
+  "status": "EXPLORATORY_NOT_PREREGISTERED",
+  "n_episodes": 4301,
+  "forward_clicks_before_first_eligible_back": {
+    "mean": 3.398976982097187,
+    "median": 3.0,
+    "q10": 1.0,
+    "q25": 2.0,
+    "q75": 4.0,
+    "q90": 6.0
+  },
+  "replacement_semantic_correction_by_prior_forward_clicks": {
+    "1_2": {"n": 1900, "mean": 0.025471996404230594, "median": 0.00149513036012645, "positive_fraction": 0.5042105263157894},
+    "3_4": {"n": 1408, "mean": 0.030905445885185723, "median": 0.00553295016288755, "positive_fraction": 0.5127840909090909},
+    "5_plus": {"n": 993, "mean": 0.03340239927392127, "median": 0.0087913572788238, "positive_fraction": 0.5206445115810675}
+  },
+  "target_matched_5plus_minus_1_2": {
+    "targets_with_both_groups": 314,
+    "mean_difference": 0.024106217975107334,
+    "median_difference": 0.0024949704529718063,
+    "positive_target_fraction": 0.5063694267515924,
+    "target_bootstrap_CI95": [-0.000583860579907252, 0.048855801312097914],
+    "u_target_bootstrap": 0.012724601588377763
+  },
+  "within_target_log_timing_slope": {
+    "slope_per_log1p_forward_click": 0.015165432939650473,
+    "target_cluster_bootstrap_CI95": [-0.00008492702651265125, 0.030371671237341236],
+    "u_target_bootstrap": 0.007893643187125848
+  },
+  "interpretation": "Humans typically reconsider after a small amount of forward exploration (median 3 clicks). Point estimates suggest somewhat larger semantic correction after more prior exploration, but target-matched uncertainty barely includes zero; additional benefit from long deferral is therefore not established.",
+  "boundary": [
+    "Post-hoc exploratory analysis of AP-RS4 human finished paths.",
+    "Timing is measured in forward hyperlink actions, not reading time or cognitive context chunks.",
+    "Does not establish that delaying reconsideration causally improves navigation or comprehension."
+  ]
+}
