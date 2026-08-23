@@ -1,0 +1,153 @@
+{
+  "phase": "AP-RS0",
+  "name": "real human Wikispeedia title-semantic progress gate",
+  "decision": "FAIL",
+  "preregistered_conditions": {
+    "n_ge_400": true,
+    "mean_gt_0": true,
+    "user_ci_lower_gt_0": true,
+    "target_ci_lower_gt_0": true,
+    "positive_paths_gt_half": false
+  },
+  "construct": "real human navigation + article-title semantics; NOT article-body/anchor/context semantics",
+  "data": {
+    "source_repo": "epfl-ada/ada-2024-project-adaspeedia",
+    "source_ref": "69052d52bbbfe57ed25e9bccbd36a5acbc0f988d",
+    "paths_url": "https://raw.githubusercontent.com/epfl-ada/ada-2024-project-adaspeedia/69052d52bbbfe57ed25e9bccbd36a5acbc0f988d/data/paths_finished_unique.tsv",
+    "similarities_url": "https://raw.githubusercontent.com/epfl-ada/ada-2024-project-adaspeedia/69052d52bbbfe57ed25e9bccbd36a5acbc0f988d/data/article_similarities.csv",
+    "unique_source_target_preprocessing": true,
+    "terminal_transition_excluded": true
+  },
+  "primary": {
+    "channel": "SBERT title cosine",
+    "path_representation": "raw BACK-reconstructed",
+    "n": 2335,
+    "mean": 0.01322834182459739,
+    "median": 0.0,
+    "sd": 0.23425498439468356,
+    "u_c": 0.004847807854164688,
+    "positive_fraction": 0.49464668094218417,
+    "zero_fraction": 0.037259100642398284,
+    "user_clusters": 1760,
+    "target_clusters": 712,
+    "source_clusters": 1673,
+    "user_cluster_ci95": [
+      0.004064814380222981,
+      0.02223448277287535
+    ],
+    "target_cluster_ci95": [
+      0.0006453289687228355,
+      0.026146471251992265
+    ],
+    "mean_positive_step_fraction": 0.5083583796645895,
+    "backtrack_path_fraction": 0.1867237687366167
+  },
+  "secondary_bert_raw": {
+    "n": 2335,
+    "mean": 0.0219052815586119,
+    "median": 0.013126525,
+    "sd": 0.14533451269873013,
+    "u_c": 0.0030076362898431943,
+    "positive_fraction": 0.576017130620985,
+    "zero_fraction": 0.037687366167023555,
+    "user_clusters": 1760,
+    "target_clusters": 712,
+    "source_clusters": 1673,
+    "user_cluster_ci95": [
+      0.016183811553578353,
+      0.028170010011470226
+    ],
+    "target_cluster_ci95": [
+      0.01185359872639161,
+      0.030940892633432165
+    ],
+    "mean_positive_step_fraction": 0.5837691169168685,
+    "backtrack_path_fraction": 0.1867237687366167
+  },
+  "secondary_sbert_straightened": {
+    "n": 2251,
+    "mean": 0.01332031002120614,
+    "median": 0.0062847174704075,
+    "sd": 0.24420851870226423,
+    "u_c": 0.005147223920292418,
+    "positive_fraction": 0.5131052865393159,
+    "zero_fraction": 0.0013327410039982231,
+    "user_clusters": 1715,
+    "target_clusters": 688,
+    "source_clusters": 1629,
+    "user_cluster_ci95": [
+      0.003482642433945224,
+      0.02371733970075132
+    ],
+    "target_cluster_ci95": [
+      0.00021037141836120331,
+      0.026596310677330086
+    ],
+    "mean_positive_step_fraction": 0.5095315662174835,
+    "backtrack_path_fraction": 0.15637494446912484
+  },
+  "sensitivity": {
+    "by_length_quartile": {
+      "(2.999, 5.0]": {
+        "n": 834,
+        "mean": 0.02553527295715262,
+        "median": 0.016251616179943085,
+        "sd": 0.2581535238292393,
+        "u_c": 0.008939125453166568,
+        "positive_fraction": 0.5239808153477218,
+        "zero_fraction": 0.004796163069544364
+      },
+      "(5.0, 6.0]": {
+        "n": 378,
+        "mean": 0.012670774365540404,
+        "median": 0.0008505918085574826,
+        "sd": 0.22893393748537064,
+        "u_c": 0.011775091158001605,
+        "positive_fraction": 0.5052910052910053,
+        "zero_fraction": 0.007936507936507936
+      },
+      "(6.0, 9.0]": {
+        "n": 656,
+        "mean": 0.007964186123673021,
+        "median": 0.0,
+        "sd": 0.23034104229766178,
+        "u_c": 0.008993306773242093,
+        "positive_fraction": 0.4878048780487805,
+        "zero_fraction": 0.03048780487804878
+      },
+      "(9.0, 435.0]": {
+        "n": 467,
+        "mean": -0.0009042790002872516,
+        "median": 0.0,
+        "sd": 0.19553099845824004,
+        "u_c": 0.009048095539210058,
+        "positive_fraction": 0.44325481798715205,
+        "zero_fraction": 0.1284796573875803
+      }
+    },
+    "by_backtrack": {
+      "False": {
+        "n": 1899,
+        "mean": 0.01418925329544401,
+        "median": 0.004765411218007405,
+        "sd": 0.24565338994217736,
+        "u_c": 0.005637158931258104,
+        "positive_fraction": 0.5118483412322274,
+        "zero_fraction": 0.001579778830963665
+      },
+      "True": {
+        "n": 436,
+        "mean": 0.009043087505474157,
+        "median": 0.0,
+        "sd": 0.1763868637772373,
+        "u_c": 0.008447398724678024,
+        "positive_fraction": 0.4197247706422018,
+        "zero_fraction": 0.1926605504587156
+      }
+    }
+  },
+  "interpretation_boundary": [
+    "A PASS would establish only a title-semantic progress signal in successful human Wikispeedia navigation.",
+    "It would not validate real article-body semantics, anchor/context scoring, bounded deferred-link causality, or human comprehension gains."
+  ]
+}
