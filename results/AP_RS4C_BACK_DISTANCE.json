@@ -1,0 +1,46 @@
+{
+  "phase": "AP-RS4c",
+  "name": "exploratory human BACK-distance semantic-correction analysis",
+  "status": "EXPLORATORY_NOT_PREREGISTERED",
+  "n_episodes": 4301,
+  "back_distance_distribution": {
+    "1": 0.8507323878167868,
+    "2": 0.10927691234596605,
+    "3": 0.02766798418972332,
+    "4": 0.008137642408742153,
+    "5": 0.0016275284817484307,
+    "6": 0.001860032550569635,
+    "7": 0.00023250406882120437,
+    "9": 0.00023250406882120437,
+    "10": 0.00023250406882120437
+  },
+  "cumulative": {
+    "P_nback_eq_1": 0.8507323878167868,
+    "P_nback_le_2": 0.9600093001627529,
+    "P_nback_le_3": 0.9876772843524761
+  },
+  "replacement_delta": {
+    "one_step": {
+      "n": 3659,
+      "mean": 0.034750297313454775,
+      "median": 0.0069070160388946,
+      "positive_fraction": 0.5176277671494944,
+      "u_c": 0.0026903161789830813
+    },
+    "two_or_more_steps": {
+      "n": 642,
+      "mean": -0.0032260037640927824,
+      "median": 0.0,
+      "positive_fraction": 0.4719626168224299,
+      "u_c": 0.0077958874792996
+    },
+    "one_minus_multi_mean": 0.037976301077547556,
+    "user_cluster_bootstrap_CI95": [0.022823686833727652, 0.05326932968132005],
+    "target_cluster_bootstrap_CI95": [0.02198308786358537, 0.05470686223938988]
+  },
+  "boundary": [
+    "Post-hoc exploratory analysis of AP-RS4 human BACK episodes.",
+    "Supports a short-backtracking behavioral pattern; does not identify a working-memory mechanism.",
+    "First eligible nonterminal BACK episode only, consistent with AP-RS4 extraction."
+  ]
+}
