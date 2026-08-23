@@ -28,3 +28,5 @@ jobs:
           name: ap-rs5-monitored-results
           path: artifacts/ap_rs5/
           if-no-files-found: error
+
+# monitored trigger 2026-08-24
