@@ -7,144 +7,119 @@ The project asks whether an unknown hypertext can be read or navigated efficient
 The research program deliberately separates two constructs:
 
 - **Reading / information acquisition:** coverage of latent core information under a reading budget.
-- **Goal-directed navigation:** reaching a target under a navigation budget, used later as a mechanism and stress-test environment.
+- **Goal-directed navigation:** reaching an explicit target under a navigation budget, used later as a mechanism and stress-test environment.
 
 Navigation results are therefore not automatically claims about human comprehension.
 
 ## Evolution of the theory
 
-### Stage 1 — Local semantic scoring
+### Stage 1 — Local semantic scoring for information acquisition
 
-Early experiments tested whether a compact local representation was sufficient for information acquisition. The robust direction was a low-dimensional additive score combining information such as:
-
-- current sentence or page relevance,
-- anchor/link relevance,
-- containing-sentence or paragraph relevance,
-- limited novelty information.
-
-A recurring finding was that **context around the link materially improves link-value estimation**. Larger recurrent, nonlinear, and global-memory models frequently improved an intermediate predictor while failing to improve the end-to-end objective.
+Early experiments supported a compact additive representation using current-text relevance, anchor/link relevance, containing-sentence or paragraph relevance, and limited novelty. In the reading/information-acquisition construct, **containing context materially improved link-value estimation**. Larger recurrent, nonlinear, and global-memory models often improved intermediate predictors without improving the end-to-end objective.
 
 ### Stage 2 — Immediate-parent runner-up memory
 
-Under a controlled distance-like cue, retaining the immediate-parent runner-up was useful. This motivated an initially strong hypothesis:
+Under a controlled distance-like cue, retaining the immediate-parent runner-up was useful. Direct counterfactual utility calibration also replicated under controlled hidden-noise mixtures. This motivated, but did not ultimately support universally, a one-scalar-history hypothesis.
 
-> A single abandoned alternative may be enough history for efficient navigation.
+### Stage 3 — Cue-universality failure
 
-Direct counterfactual utility calibration gave additional gains under some controlled-cue conditions and independently replicated, including hidden noise-mixture tests. However, those results still depended on a controlled observation channel.
-
-### Stage 3 — Cue-universality test
-
-The one-scalar hypothesis was then tested under a spectral/non-distance bridge derived from the same Wikipedia graph topology but without using shortest-path distance directly as the observation score.
-
-The hypothesis failed. The runner-up policy could become materially worse than local-only navigation. Recalibrating the margin did not rescue it.
-
-This changed the theory from:
-
-> one scalar history is sufficient
-
-into:
-
-> the useful amount and representation of memory depend on the observation/value channel.
+Under a spectral/non-distance bridge, immediate-parent runner-up memory could materially hurt. Margin recalibration did not rescue it. The theory changed from “one scalar history is sufficient” to **memory representation depends on the observation/value channel**.
 
 ### Stage 4 — Frontier oracle and trajectory utility
 
-Oracle experiments showed that richer abandoned-alternative frontiers could contain large latent value. Yet observable score-based frontiers and myopic value models could not recover that value end-to-end.
+Richer abandoned-alternative frontiers contained large oracle value, but score-based and myopic value models could not recover it. The key distinction became:
 
-The key distinction was:
+> “this alternative is locally closer/better” is not equivalent to “returning to this alternative and then continuing with the same imperfect policy improves the final outcome.”
 
-> "this alternative is locally closer/better" is not equivalent to "returning to this alternative and then continuing with the same imperfect policy improves the final outcome."
-
-The teacher was therefore changed from a myopic state-local target to **counterfactual trajectory utility**:
+The teacher was therefore changed to counterfactual trajectory utility:
 
 \[
-Y = S_B^{\text{BACK}} - S_B^{\text{CONTINUE}}.
+Y = S_B^{\mathrm{BACK}} - S_B^{\mathrm{CONTINUE}}.
 \]
 
-This changed the sign of the deployable effect from negative to positive.
+This changed the deployable effect from negative to positive in the spectral bridge.
 
 ### Stage 5 — Bounded-memory compression
 
-The successful richer-history policy was then compressed aggressively.
+The richer-history policy was compressed to the immediately previous decision point, K=4 abandoned alternatives, one discretionary reconsideration, and a 3-feature Ridge model. AP-S43 froze this policy and replicated it on 12 new seeds × 500 tasks = 6,000 tasks:
 
-Key results:
-
-- K=8 could be reduced to **K=4** with almost no early-budget loss.
-- Full ancestor history could be reduced to the **immediately previous decision point**.
-- K=3 or less failed the preregistered retention/safety criterion in the tested bridge.
-- A 6-feature value model could be reduced to **3 features**:
-  - candidate degree,
-  - origin candidate count,
-  - relative score.
-- A frozen 3-feature / K=4 / one-shot policy replicated on 12 new seeds × 500 tasks.
-
-This restored an O(1)-in-depth policy, but the constant state is richer than one scalar.
-
-### Stage 6 — Capacity plateau, delay, and adaptive memory
-
-Later tests examined the human-inspired ideas of larger short-term buffers, delayed reconsideration, and load-adaptive capacity.
-
-Results:
-
-- K=7 or K=9 did not materially outperform K=4.
-- Several-page delayed reconsideration did not establish an advantage over next-decision-point reconsideration.
-- Persistent multi-page pending-link retention was not supported.
-- A task-demand K=3/4/5 rule did not materially beat fixed K=4.
-- A resource-saving K=5/4/3 rule reduced mean stored candidates by about 20.9% while losing about 0.4 percentage points versus fixed K=4.
-
-The most defensible current interpretation is therefore:
-
-> **Acquire local context first; keep a small and short-lived option buffer; reconsider it quickly and at most once; treat memory capacity as a resource/performance trade-off rather than assuming that more retained links always help.**
-
-## Current compact bridge policy
-
-Under the Chameleon spectral/non-distance bridge:
-
-- local context first,
-- history window: immediate previous decision point,
-- candidate memory cap: 4,
-- features: candidate degree, origin candidate count, relative score,
-- model: frozen Ridge counterfactual trajectory utility,
-- threshold: 0.05,
-- maximum discretionary interventions: 1,
-- preferred reconsideration: next decision point / TTL=1.
-
-## Decisive confirmatory result: AP-S43
-
-Frozen after model/feature/cap selection; 12 completely new seeds × 500 tasks = 6,000 tasks.
-
-- S@16: **+3.9167 pp**, 95% cluster+task CI **[+3.133,+4.683] pp**, 12/12 seeds positive.
+- S@16: **+3.9167 pp**, 95% CI **[+3.133,+4.683] pp**, 12/12 seeds positive.
 - S@32: **+1.1500 pp**, 95% CI **[+0.250,+2.067] pp**, 9/12 seeds positive.
 
-## Resource-saving result: AP-S49
+K=7 or K=9 did not materially improve over K=4. Multi-page delayed retention was not supported. A resource-saving adaptive cap reduced candidate memory by about 20.9% at a cost of about 0.4 pp.
 
-12 new seeds × 500 tasks = 6,000 tasks.
+### Stage 6 — Real human Wikispeedia semantics
 
-Relative to fixed K=4, the high-branching resource-saving cap reduced mean stored alternatives from 2.987 to 2.364 per forward page (about 20.9%) with:
+The next phase moved from surrogate policy environments to real human Wikispeedia paths.
 
-- S@16 change: **-0.433 pp**, CI **[-0.733,-0.150] pp**.
-- S@32 change: **-0.400 pp**, CI **[-0.633,-0.183] pp**.
+AP-RS3 showed strong target-directed progress using complete article-title embeddings. AP-RS4 upgraded the outcome space to **actual Wikispeedia article-body semantics** and excluded the terminal target transition.
 
-This is a memory/performance trade-off, not a performance improvement.
+AP-RS4 findings:
 
-## Claim boundary
+- 28,182 successful human paths showed strong positive nonterminal body-semantic progress; **96.36%** of paths had positive mean progress.
+- In 4,301 first eligible nonterminal BACK episodes, returning to the ancestor itself moved away from the target on average, but the replacement branch moved **+0.0291** in body-semantic similarity relative to the abandoned branch; the preregistered average-effect criterion passed.
+- The episode-level effect is heterogeneous; the raw positive fraction was only **51.08%**.
 
-### Supported as computational findings
+Exploratory AP-RS4c/4e analyses sharpened the mechanism:
 
-- Link value should be evaluated with surrounding context rather than anchor text alone.
-- More model/state complexity does not automatically improve end-to-end performance.
+- **85.1%** of first eligible BACK episodes were one-step returns; **96.0%** were within two steps.
+- One-step replacement correction averaged **+0.0348**, whereas two-or-more-step correction averaged approximately zero/negative; target-matched sensitivity retained a positive one-step advantage.
+- When the immediately preceding forward click was itself a body-semantic regression, the subsequent replacement correction was very large (**+0.0927** on average). When the preceding click had already improved target similarity, replacement-vs-abandoned was slightly negative on average.
+
+These are observational human-navigation results. They support a **short-range branch-correction pattern**, not a human working-memory mechanism.
+
+### Stage 7 — First causal real anchor/context gate: AP-RS5
+
+AP-RS5 used real Wikispeedia HTML, real hyperlink topology, and mission pairs from the human task distribution. Candidate actions were scored using a frozen MiniLM mixture of **0.5 anchor text + 0.5 containing paragraph**. Fit/tune/test targets were disjoint, and test contained 1,200 missions.
+
+The preregistered bounded-deferred policy **FAILED**:
+
+- equal anchor/context local S@16: **0.7425**
+- bounded policy S@16: **0.7475**
+- delta: **+0.50 pp**, target-cluster CI approximately **[-0.43,+1.45] pp**
+- equal local S@32: **0.8275**
+- bounded policy S@32: **0.8325**
+- delta: **+0.50 pp**
+
+The +2 pp early-budget threshold, positive-CI threshold, and 6/8 target-bucket threshold all failed. Long-horizon safety passed.
+
+A major construct-specific scorer result also emerged:
+
+- **anchor-only local:** S@16 **0.7908**, S@32 **0.8458**
+- equal anchor/context local: S@16 0.7425, S@32 0.8275
+- context-only local: S@16 0.3808, S@32 0.5333
+
+Thus, on **explicit target navigation**, containing paragraph context diluted a very strong anchor-target signal. This does **not** overturn the earlier reading/information-acquisition result that context is useful; it strengthens the need to keep the two constructs separate.
+
+Implementation audit: one AP-RS5 gate feature (`candidate_outdegree`) uses metadata from an unvisited candidate page, so RS5 is best described as **graph-assisted real-semantic** rather than strictly human-visible. AP-RS6 was specified before reading the RS5 outcome to remove that feature.
+
+## Current scientific position
+
+### Supported
+
+- In reading/information-acquisition experiments, anchor semantics are more useful when combined with containing context.
+- In explicit target navigation, the best local semantic channel can differ; AP-RS5 strongly favored anchor-only scoring.
 - One abandoned alternative is not universally sufficient.
-- In the tested spectral bridge, a short-lived top-4 buffer is enough to recover the useful deployable signal found by richer frontiers.
-- Counterfactual trajectory utility is more appropriate than a myopic local-value teacher for deciding whether to return.
-- Repeated discretionary returns and long-lived pending buffers are not supported.
+- In the spectral bridge, a short-lived top-4 buffer plus one-shot trajectory utility is a reproducible compact policy.
+- Real successful human Wikispeedia paths show strong body-semantic target progress.
+- Human BACK behavior is predominantly short-range, and short-range BACK followed by branch replacement is associated with semantic correction.
+- A generic real-semantic bounded-deferred policy using the frozen equal anchor/context scorer did **not** meet the causal transfer criterion in AP-RS5.
 
-### Not yet established
+### Not established
 
 - That K=4 is a human working-memory constant.
-- That the policy improves human comprehension or retention.
-- That the same compact policy transfers to real anchor + containing-context multi-hop tasks.
+- That bounded deferred links improve human comprehension or retention.
+- That the AP-S43 compact policy transfers to real visible semantics.
+- That context should always be added to anchor text for explicit target navigation.
+- That observed human BACK correction is caused by a bounded option buffer.
 - That this is an optimal human hyperlink-reading strategy.
 
-## Required next external-validity gates
+## Active external-validity tests
 
-1. At least 400 independent real anchor/context semantic tasks with page/source-target clustering and real multi-hop outcomes where possible.
-2. Human experiments comparing immediate-click, straight-through, and bounded-deferred-link conditions on comprehension, retention, reading time, navigation behavior, and cognitive load.
+- **AP-RS6:** strictly visible-only equal anchor/context gate; removes unvisited candidate metadata.
+- **AP-RS7:** target-matched finished-vs-unfinished human BACK body-semantic correction.
+- **AP-RS8:** visible anchor-only local baseline plus bounded one-shot reconsideration; tests whether deferred memory adds value when the local semantic channel is already strong.
+
+## Human and agent-assistance frontier
+
+A later human/agent experiment should separate at least four information regimes: unaided reading, external short-term buffer only, agent reranking of retained links, and agent prefetch/summarization of destination pages. Prefetch changes the information regime and should not be conflated with simple memory offloading.
