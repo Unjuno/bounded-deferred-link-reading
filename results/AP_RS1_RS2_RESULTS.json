@@ -1,0 +1,168 @@
+{
+  "phase": "AP-RS1/RS2",
+  "name": "real human Wikispeedia BACK semantic correction gate",
+  "primary_channel": "SBERT article-title cosine",
+  "primary_AP_RS2_decision": "FAIL",
+  "construct": "real human BACK behavior + article-title semantics; NOT body/anchor/context semantics",
+  "terminal_replacement_excluded": true,
+  "one_episode_per_unique_source_target_path_primary": true,
+  "results": {
+    "sbert": {
+      "first_nonterminal_backtrack_episode": {
+        "AP_RS1_return_action": {
+          "n": 56,
+          "mean": 0.05343621346401051,
+          "median": 0.02516787499189376,
+          "sd": 0.27432967197199,
+          "u_c": 0.03665884441233102,
+          "positive_fraction": 0.5714285714285714,
+          "zero_fraction": 0.0,
+          "user_clusters": 52,
+          "target_clusters": 54,
+          "user_cluster_ci95": [
+            -0.01257735538735326,
+            0.12408668211693304
+          ],
+          "target_cluster_ci95": [
+            -0.020849379547193278,
+            0.13032315675549866
+          ]
+        },
+        "AP_RS2_replacement_vs_abandoned": {
+          "n": 56,
+          "mean": 0.054191060264461806,
+          "median": 0.0,
+          "sd": 0.1941406352096911,
+          "u_c": 0.025943133635904496,
+          "positive_fraction": 0.4642857142857143,
+          "zero_fraction": 0.32142857142857145,
+          "user_clusters": 52,
+          "target_clusters": 54,
+          "user_cluster_ci95": [
+            0.004523821397491829,
+            0.10798524255847688
+          ],
+          "target_cluster_ci95": [
+            0.004485681625647527,
+            0.10236206082170461
+          ]
+        },
+        "AP_RS2_conditions": {
+          "n_ge_300": false,
+          "mean_gt_0": true,
+          "user_ci_lower_gt_0": true,
+          "target_ci_lower_gt_0": true,
+          "positive_paths_gt_half": false
+        },
+        "AP_RS2_decision": "FAIL",
+        "replacement_vs_return": {
+          "n": 56,
+          "mean": 0.000754846800451294,
+          "median": 0.02241443097591396,
+          "sd": 0.28543765008356237,
+          "u_c": 0.038143210424948455,
+          "positive_fraction": 0.5178571428571429,
+          "zero_fraction": 0.0,
+          "user_clusters": 52,
+          "target_clusters": 54,
+          "user_cluster_ci95": [
+            -0.07392878870691427,
+            0.07913563585137195
+          ],
+          "target_cluster_ci95": [
+            -0.07545069376965763,
+            0.06932881520686868
+          ]
+        },
+        "mean_back_steps": 1.125
+      },
+      "all_nonterminal_episodes_descriptive": {
+        "n_episodes": 70,
+        "n_paths": 56,
+        "replacement_delta_mean": 0.043412983337683335,
+        "return_delta_mean": 0.0709807184325265
+      }
+    },
+    "bert": {
+      "first_nonterminal_backtrack_episode": {
+        "AP_RS1_return_action": {
+          "n": 56,
+          "mean": -0.03416439089285713,
+          "median": -0.012378665000000011,
+          "sd": 0.131356343561533,
+          "u_c": 0.0175532297566652,
+          "positive_fraction": 0.4642857142857143,
+          "zero_fraction": 0.0,
+          "user_clusters": 52,
+          "target_clusters": 54,
+          "user_cluster_ci95": [
+            -0.06661737992676266,
+            -0.00024978365618448826
+          ],
+          "target_cluster_ci95": [
+            -0.06872427247095529,
+            -0.0021382174818181726
+          ]
+        },
+        "AP_RS2_replacement_vs_abandoned": {
+          "n": 56,
+          "mean": -0.014404995535714279,
+          "median": 0.0,
+          "sd": 0.12160889284476117,
+          "u_c": 0.016250671864642907,
+          "positive_fraction": 0.30357142857142855,
+          "zero_fraction": 0.32142857142857145,
+          "user_clusters": 52,
+          "target_clusters": 54,
+          "user_cluster_ci95": [
+            -0.0460476456860599,
+            0.01931570529254382
+          ],
+          "target_cluster_ci95": [
+            -0.04739688068636363,
+            0.018261151803336463
+          ]
+        },
+        "AP_RS2_conditions": {
+          "n_ge_300": false,
+          "mean_gt_0": false,
+          "user_ci_lower_gt_0": false,
+          "target_ci_lower_gt_0": false,
+          "positive_paths_gt_half": false
+        },
+        "AP_RS2_decision": "FAIL",
+        "replacement_vs_return": {
+          "n": 56,
+          "mean": 0.019759395357142856,
+          "median": 0.01039794500000002,
+          "sd": 0.12450548548954474,
+          "u_c": 0.01663774533842253,
+          "positive_fraction": 0.5714285714285714,
+          "zero_fraction": 0.0,
+          "user_clusters": 52,
+          "target_clusters": 54,
+          "user_cluster_ci95": [
+            -0.012900193230965909,
+            0.052433094485521865
+          ],
+          "target_cluster_ci95": [
+            -0.011970926939576805,
+            0.05019223714090908
+          ]
+        },
+        "mean_back_steps": 1.125
+      },
+      "all_nonterminal_episodes_descriptive": {
+        "n_episodes": 70,
+        "n_paths": 56,
+        "replacement_delta_mean": -0.02368882671428571,
+        "return_delta_mean": -0.02798170885714285
+      }
+    }
+  },
+  "interpretation_boundary": [
+    "RS1 tests whether the BACK action itself moves toward a title-semantically closer page.",
+    "RS2 tests whether the replacement chosen after BACK is title-semantically closer to target than the abandoned page.",
+    "Neither establishes causal benefit of deferred-link reading or human comprehension."
+  ]
+}
