@@ -36,11 +36,20 @@
     },
     "one_minus_multi_mean": 0.037976301077547556,
     "user_cluster_bootstrap_CI95": [0.022823686833727652, 0.05326932968132005],
-    "target_cluster_bootstrap_CI95": [0.02198308786358537, 0.05470686223938988]
+    "target_cluster_bootstrap_CI95": [0.02198308786358537, 0.05470686223938988],
+    "target_matched_sensitivity": {
+      "targets_with_both_distances": 404,
+      "mean_within_target_one_step_minus_multi": 0.03268931079431123,
+      "median_within_target_difference": 0.033936206251382765,
+      "positive_target_fraction": 0.5693069306930693,
+      "target_bootstrap_CI95": [0.00883532, 0.05576662],
+      "u_target_bootstrap": 0.011802459711772753
+    }
   },
   "boundary": [
     "Post-hoc exploratory analysis of AP-RS4 human BACK episodes.",
     "Supports a short-backtracking behavioral pattern; does not identify a working-memory mechanism.",
-    "First eligible nonterminal BACK episode only, consistent with AP-RS4 extraction."
+    "First eligible nonterminal BACK episode only, consistent with AP-RS4 extraction.",
+    "The target-matched sensitivity was also defined after inspecting AP-RS4 and remains exploratory."
   ]
 }
