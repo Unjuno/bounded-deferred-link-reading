@@ -1,0 +1,47 @@
+{
+  "phase": "AP-S43",
+  "description": "Confirmatory replication of frozen compact spectral-bridge policy selected in AP-S42",
+  "policy": {
+    "history": "immediate previous page only",
+    "candidate_memory": 4,
+    "features": ["candidate_degree", "origin_candidate_count", "relative_score"],
+    "feature_dim": 3,
+    "model": "frozen AP-S42 Ridge",
+    "margin": 0.05,
+    "max_interventions": 1,
+    "intervention_horizon": 16
+  },
+  "test": {
+    "seeds": [20390111,20390222,20390333,20390444,20390555,20390666,20390777,20390888,20390999,20391110,20391221,20391332],
+    "n_per_seed": 500,
+    "n_total": 6000
+  },
+  "compact_vs_local": {
+    "S16": {
+      "mean": 0.03916666666666667,
+      "ci95": [0.03133333333333333,0.04683333333333334],
+      "positive_seed_fraction": 1.0,
+      "seed_sd": 0.010107003272558843,
+      "u_c": 0.0029176405300561387
+    },
+    "S32": {
+      "mean": 0.0115,
+      "ci95": [0.0025,0.020666666666666667],
+      "positive_seed_fraction": 0.75,
+      "seed_sd": 0.011851352051751118,
+      "u_c": 0.003421190648669766
+    },
+    "mean_intervention_rate": 0.21383333333333332
+  },
+  "full6_vs_local_secondary": {
+    "S16": {"mean": 0.039, "ci95": [0.030666666666666665,0.04766666666666667]},
+    "S32": {"mean": 0.012666666666666666, "ci95": [0.0029999999999999996,0.022000000000000002]}
+  },
+  "compact_minus_full6_secondary": {
+    "S16": {"mean": 0.00016666666666666666, "ci95": [-0.0030000000000000005,0.0033333333333333335]},
+    "S32": {"mean": -0.0011666666666666668, "ci95": [-0.004166666666666666,0.0019999999999999996]}
+  },
+  "decision_rule": "PASS iff compact S@16 gain>=+2pp, CI lower>0, >=75% seeds positive, AND compact S@32 mean>=-0.5pp with CI lower>=-1pp.",
+  "decision": "PASS",
+  "scope_warning": "Spectral graph-derived bridge, not real anchor/context semantics."
+}
