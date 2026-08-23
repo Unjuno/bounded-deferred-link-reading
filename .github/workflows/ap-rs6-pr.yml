@@ -7,6 +7,7 @@ on:
       - 'experiments/ap_rs6_visible_only_policy.py'
       - '.github/workflows/ap-rs6-pr.yml'
 
+# Monitoring-only branch touch; no experimental condition changed.
 permissions:
   contents: read
 
