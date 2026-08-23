@@ -7,6 +7,7 @@ on:
       - 'experiments/ap_rs9_wrong_turn_triggered_policy.py'
       - '.github/workflows/ap-rs9-pr.yml'
 
+# Monitoring-only trigger; experimental conditions unchanged.
 permissions:
   contents: read
 
