@@ -1,0 +1,390 @@
+{
+  "phase": "AP-RS13",
+  "name": "K1 trigger-only visible semantic-state direct utility",
+  "decision": "FAIL",
+  "preregistered_conditions": {
+    "test_n_ge_400": true,
+    "S16_gain_ge_2pp": false,
+    "S16_target_CI_lower_gt_0": false,
+    "S16_positive_target_buckets_ge_6_of_8": false,
+    "S32_mean_noninferior_minus_0_5pp": true,
+    "S32_target_CI_lower_ge_minus_1pp": true
+  },
+  "construct": "real Wikispeedia visible anchor/paragraph plus visited-page semantics; K1 simulated navigation trigger",
+  "data": {
+    "articles": 4604,
+    "graph_links": 119882,
+    "missions": 28707,
+    "visible_edge_coverage": 0.9672844964214812,
+    "body_coverage": 1.0
+  },
+  "split": {
+    "target_disjoint": true,
+    "seed": 20260901,
+    "fit_tasks": 1500,
+    "tune_tasks": 800,
+    "test_tasks": 2400,
+    "fit_targets": 1330,
+    "tune_targets": 665,
+    "test_targets": 1331
+  },
+  "teacher": {
+    "fit_rows": 9555,
+    "fit_non_tie": 1398,
+    "fit_positive": 434,
+    "fit_negative": 964,
+    "fit_auc": {
+      "V0": 0.7238476872478344,
+      "V1": 0.7311019274528175,
+      "V2": 0.7367236648373711
+    },
+    "heldout_test_rows": 15457,
+    "heldout_non_tie": 2227,
+    "heldout_auc": {
+      "V0": 0.7039530153456225,
+      "V1": 0.7041234039381064,
+      "V2": 0.689138792157865
+    }
+  },
+  "variants": {
+    "V0": "log1p(origin count), rank2 anchor relative to current top1, step fraction",
+    "V1": "V0 + current candidate count/top1/gap + previous rank2-vs-rank1 margin",
+    "V2": "V1 + visited current/parent body and title semantics + remembered rank2 paragraph and anchor-context disagreement"
+  },
+  "tuning": {
+    "grid": [
+      {
+        "variant": "V0",
+        "margin": -0.2,
+        "d16": 0.00125,
+        "d32": -0.00625,
+        "intervention_rate": 0.9175
+      },
+      {
+        "variant": "V0",
+        "margin": -0.1,
+        "d16": 0.0025,
+        "d32": -0.00625,
+        "intervention_rate": 0.82375
+      },
+      {
+        "variant": "V0",
+        "margin": -0.05,
+        "d16": 0.00125,
+        "d32": -0.005,
+        "intervention_rate": 0.77375
+      },
+      {
+        "variant": "V0",
+        "margin": -0.02,
+        "d16": 0.0025,
+        "d32": -0.00875,
+        "intervention_rate": 0.72125
+      },
+      {
+        "variant": "V0",
+        "margin": 0.0,
+        "d16": 0.00875,
+        "d32": -0.0025,
+        "intervention_rate": 0.66625
+      },
+      {
+        "variant": "V0",
+        "margin": 0.01,
+        "d16": 0.005,
+        "d32": -0.005,
+        "intervention_rate": 0.6275
+      },
+      {
+        "variant": "V0",
+        "margin": 0.02,
+        "d16": -0.00125,
+        "d32": -0.005,
+        "intervention_rate": 0.575
+      },
+      {
+        "variant": "V0",
+        "margin": 0.05,
+        "d16": 0.00375,
+        "d32": 0.00125,
+        "intervention_rate": 0.195
+      },
+      {
+        "variant": "V0",
+        "margin": 0.1,
+        "d16": -0.0025,
+        "d32": 0.0,
+        "intervention_rate": 0.0175
+      },
+      {
+        "variant": "V0",
+        "margin": 0.2,
+        "d16": 0.0,
+        "d32": 0.0,
+        "intervention_rate": 0.0
+      },
+      {
+        "variant": "V0",
+        "margin": 0.4,
+        "d16": 0.0,
+        "d32": 0.0,
+        "intervention_rate": 0.0
+      },
+      {
+        "variant": "V0",
+        "margin": 999.0,
+        "d16": 0.0,
+        "d32": 0.0,
+        "intervention_rate": 0.0
+      },
+      {
+        "variant": "V1",
+        "margin": -0.2,
+        "d16": 0.00125,
+        "d32": -0.00625,
+        "intervention_rate": 0.92
+      },
+      {
+        "variant": "V1",
+        "margin": -0.1,
+        "d16": 0.00375,
+        "d32": -0.00625,
+        "intervention_rate": 0.84125
+      },
+      {
+        "variant": "V1",
+        "margin": -0.05,
+        "d16": 0.0025,
+        "d32": -0.005,
+        "intervention_rate": 0.78875
+      },
+      {
+        "variant": "V1",
+        "margin": -0.02,
+        "d16": 0.00375,
+        "d32": -0.0075,
+        "intervention_rate": 0.74625
+      },
+      {
+        "variant": "V1",
+        "margin": 0.0,
+        "d16": 0.00625,
+        "d32": -0.00625,
+        "intervention_rate": 0.70125
+      },
+      {
+        "variant": "V1",
+        "margin": 0.01,
+        "d16": 0.0,
+        "d32": -0.0075,
+        "intervention_rate": 0.63625
+      },
+      {
+        "variant": "V1",
+        "margin": 0.02,
+        "d16": 0.005,
+        "d32": 0.0025,
+        "intervention_rate": 0.52625
+      },
+      {
+        "variant": "V1",
+        "margin": 0.05,
+        "d16": 0.00375,
+        "d32": -0.00125,
+        "intervention_rate": 0.1075
+      },
+      {
+        "variant": "V1",
+        "margin": 0.1,
+        "d16": 0.0,
+        "d32": 0.0,
+        "intervention_rate": 0.00125
+      },
+      {
+        "variant": "V1",
+        "margin": 0.2,
+        "d16": 0.0,
+        "d32": 0.0,
+        "intervention_rate": 0.0
+      },
+      {
+        "variant": "V1",
+        "margin": 0.4,
+        "d16": 0.0,
+        "d32": 0.0,
+        "intervention_rate": 0.0
+      },
+      {
+        "variant": "V1",
+        "margin": 999.0,
+        "d16": 0.0,
+        "d32": 0.0,
+        "intervention_rate": 0.0
+      },
+      {
+        "variant": "V2",
+        "margin": -0.2,
+        "d16": 0.00125,
+        "d32": -0.00625,
+        "intervention_rate": 0.9225
+      },
+      {
+        "variant": "V2",
+        "margin": -0.1,
+        "d16": 0.00375,
+        "d32": -0.00625,
+        "intervention_rate": 0.8425
+      },
+      {
+        "variant": "V2",
+        "margin": -0.05,
+        "d16": 0.00375,
+        "d32": -0.005,
+        "intervention_rate": 0.79625
+      },
+      {
+        "variant": "V2",
+        "margin": -0.02,
+        "d16": 0.005,
+        "d32": -0.00625,
+        "intervention_rate": 0.76125
+      },
+      {
+        "variant": "V2",
+        "margin": 0.0,
+        "d16": 0.005,
+        "d32": -0.00375,
+        "intervention_rate": 0.7
+      },
+      {
+        "variant": "V2",
+        "margin": 0.01,
+        "d16": 0.00375,
+        "d32": -0.00375,
+        "intervention_rate": 0.63875
+      },
+      {
+        "variant": "V2",
+        "margin": 0.02,
+        "d16": 0.00125,
+        "d32": 0.0,
+        "intervention_rate": 0.54
+      },
+      {
+        "variant": "V2",
+        "margin": 0.05,
+        "d16": 0.005,
+        "d32": 0.0,
+        "intervention_rate": 0.1525
+      },
+      {
+        "variant": "V2",
+        "margin": 0.1,
+        "d16": -0.00125,
+        "d32": 0.0,
+        "intervention_rate": 0.00375
+      },
+      {
+        "variant": "V2",
+        "margin": 0.2,
+        "d16": 0.0,
+        "d32": 0.0,
+        "intervention_rate": 0.0
+      },
+      {
+        "variant": "V2",
+        "margin": 0.4,
+        "d16": 0.0,
+        "d32": 0.0,
+        "intervention_rate": 0.0
+      },
+      {
+        "variant": "V2",
+        "margin": 999.0,
+        "d16": 0.0,
+        "d32": 0.0,
+        "intervention_rate": 0.0
+      }
+    ],
+    "selected": {
+      "variant": "V0",
+      "margin": 0.0,
+      "d16": 0.00875,
+      "d32": -0.0025,
+      "intervention_rate": 0.66625
+    },
+    "safety_constraint": "mean S@32 harm <= 0.5pp"
+  },
+  "test": {
+    "local": {
+      "S16": 0.7816666666666666,
+      "S32": 0.8491666666666666
+    },
+    "policy": {
+      "variant": "V0",
+      "margin": 0.0,
+      "S16": 0.7654166666666666,
+      "S32": 0.8483333333333334,
+      "delta_S16": -0.01625,
+      "delta_S32": -0.0008333333333333334,
+      "target_cluster_CI95_S16": [
+        -0.028394305897186795,
+        -0.004610178035468033
+      ],
+      "target_cluster_CI95_S32": [
+        -0.00774526678141136,
+        0.006316995288390677
+      ],
+      "target_bucket_S16": {
+        "means": [
+          -0.012903225806451613,
+          -0.016556291390728478,
+          -0.012578616352201259,
+          -0.019230769230769232,
+          -0.029411764705882353,
+          -0.028662420382165606,
+          -0.020066889632107024,
+          0.01098901098901099
+        ],
+        "positive": 1,
+        "u_c": 0.0044665016725901055,
+        "U_k1.96": 0.008754343278276606
+      },
+      "target_bucket_S32": {
+        "means": [
+          0.0032258064516129032,
+          -0.023178807947019868,
+          0.006289308176100629,
+          -0.003205128205128205,
+          0.003676470588235294,
+          -0.01592356687898089,
+          0.006688963210702341,
+          0.018315018315018316
+        ],
+        "positive": 5,
+        "u_c": 0.004710619176765148,
+        "U_k1.96": 0.00923281358645969
+      },
+      "intervention_rate": 0.6629166666666667
+    },
+    "oracle_K1": {
+      "delta_S16": 0.08125,
+      "delta_S32": 0.049166666666666664,
+      "target_cluster_CI95_S16": [
+        0.0675379945292423,
+        0.09672094996449362
+      ],
+      "target_cluster_CI95_S32": [
+        0.038384518260925905,
+        0.06045088075157465
+      ],
+      "learned_oracle_recovery_fraction_S16": -0.2
+    }
+  },
+  "boundary": [
+    "V2 uses only pages and link context already visited/seen; it does not prefetch the deferred destination.",
+    "Semantic scoring computation is sidebar-agent feasible but human cognitive cost is not modeled.",
+    "Variant and threshold selection occurs only on tune targets; test targets are touched once for deployment evaluation.",
+    "This is simulated goal-directed navigation, not human comprehension or retention."
+  ]
+}
