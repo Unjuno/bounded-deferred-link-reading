@@ -1,0 +1,32 @@
+name: AP-RS12 monitored anchor oracle capacity
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'experiments/ap_rs12_anchor_oracle_buffer_capacity.py'
+      - '.github/workflows/ap-rs12-pr.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  ap-rs12-monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip numpy beautifulsoup4 lxml sentence-transformers
+      - name: Run AP-RS12
+        run: python -m experiments.ap_rs12_anchor_oracle_buffer_capacity
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ap-rs12-monitored-results
+          path: |
+            artifacts/ap_rs12/AP_RS12_RESULTS.json
+            artifacts/ap_rs12/AP_RS12_SUMMARY.md
+          if-no-files-found: error
