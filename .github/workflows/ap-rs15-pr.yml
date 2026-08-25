@@ -1,0 +1,32 @@
+name: AP-RS15 monitored sidebar prefetch
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'experiments/ap_rs15_sidebar_prefetch_k1.py'
+      - '.github/workflows/ap-rs15-pr.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  ap-rs15-monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip numpy beautifulsoup4 lxml sentence-transformers scikit-learn
+      - name: Run AP-RS15
+        run: PYTHONPATH=. python experiments/ap_rs15_sidebar_prefetch_k1.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ap-rs15-monitored-results
+          path: |
+            artifacts/ap_rs15/AP_RS15_RESULTS.json
+            artifacts/ap_rs15/AP_RS15_SUMMARY.md
+          if-no-files-found: error
