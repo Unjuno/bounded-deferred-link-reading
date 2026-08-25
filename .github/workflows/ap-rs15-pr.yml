@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install dependencies
-        run: python -m pip install --upgrade pip numpy beautifulsoup4 lxml sentence-transformers scikit-learn
+        run: python -m pip install --upgrade pip numpy pandas beautifulsoup4 lxml sentence-transformers scikit-learn
       - name: Run AP-RS15
         run: PYTHONPATH=. python experiments/ap_rs15_sidebar_prefetch_k1.py
       - uses: actions/upload-artifact@v4
