@@ -1,50 +1,84 @@
-# Data, Licensing, and Reproducibility Notice
+# Data, Licensing, Reproducibility, and Claim Notice
 
-## Scope of this public repository
+## Scope
 
-This repository is a public release of a computational and hypothesis-generating research program on bounded-memory hypertext reading/navigation.
+This repository is a public computational research record on deferred reading/querying under limited time, attention, memory, and observability.
 
-It intentionally distinguishes:
+It contains:
 
-- **results and analysis authored for this project**, which are released under the repository license unless otherwise stated;
-- **third-party datasets and graph resources**, which remain under their original licenses and are not automatically relicensed by this repository.
+- project-authored experiment code, preregistrations, analyses, and summaries;
+- selected small machine-readable result files;
+- references to third-party datasets and model weights downloaded at runtime.
 
-## External data
+It does **not** redistribute the large third-party corpora or model weights used by the later real-data experiments.
 
-The research program has used or investigated Wikipedia-derived resources, including Wikipedia article-network data and public dataset mirrors. To avoid accidental relicensing or redistribution problems, the public repository should prefer:
+## External resources used by the code
 
-1. source links and dataset identifiers;
-2. deterministic download/preprocessing instructions;
-3. hashes or metadata for locally generated intermediates;
-4. small project-authored result summaries rather than copied third-party corpora.
+The later Wikispeedia experiments reference public upstream resources including:
 
-Do not commit a third-party dataset simply because it was available during an experiment. Verify its original license first.
+- Stanford SNAP Wikispeedia paths/graph archive;
+- Stanford SNAP Wikispeedia article HTML archive;
+- Stanford SNAP Wikispeedia article plaintext archive;
+- a pinned public path file from the EPFL ADA Wikispeedia project used by AP-RS4;
+- `sentence-transformers/all-MiniLM-L6-v2` model weights for semantic embeddings.
+
+These resources remain under their own upstream terms. Their presence as download URLs in this repository does not relicense them under MIT.
+
+Before redistributing an upstream corpus, model, or derived resource, check the corresponding source license/terms directly.
+
+## Repository license
+
+Unless a file states otherwise, project-authored code and text in this repository are released under the MIT License in `LICENSE`.
+
+The MIT license applies only to material the repository has the right to license. It does not override third-party dataset/model terms.
 
 ## Reproducibility status
 
-### Reproduced in frozen independent test blocks
+The repository preserves fixed seeds, experiment scripts, preregistration documents for major confirmatory phases, and selected result outputs.
 
-The compact spectral-bridge policy was frozen after selection and independently replicated in AP-S43 on 12 new seeds × 500 tasks. The resource-saving memory variant was then tested in AP-S49 on another 12 new seeds × 500 tasks.
+Headline preserved results include:
 
-Selected machine-readable results are available in `results/`.
+- AP-S43 compact spectral-bridge replication;
+- AP-S49 adaptive memory/resource trade-off;
+- real Wikispeedia observational and causal/diagnostic phases;
+- AP-LM1 recursive query scheduling;
+- AP-LM2 asynchronous/slack-aware scheduling;
+- AP-LM3B held-out grounded natural-language confirmation;
+- AP-T1 analytic sanity checks.
 
-### Not yet externally validated
+See `REPRODUCIBILITY.md` for commands and environment notes.
 
-The following are explicit missing gates:
+Historical GitHub Actions workflows used during active experimentation are intentionally not active in the public release tree. Some of them had repository-write permissions to commit result artifacts. Their historical definitions remain available through git history; reproduction should now be explicit rather than automatically triggered by changes to the public repository.
 
-- 400+ independent tasks using real anchor text + containing context semantics with appropriate source/page clustering;
-- direct human experiments on comprehension, delayed retention, navigation behavior, reading time, and cognitive load.
+## Important implementation/audit corrections
 
-Accordingly, statements such as "four links is the human working-memory optimum" or "this is the optimal human hyperlink-reading strategy" are not supported by the current evidence.
+The research record intentionally preserves corrections and negative results.
 
-## Known implementation corrections
+Notable examples:
 
-The research log includes negative findings and corrected implementation mistakes. In particular, an off-by-one error in an early bounded-history-window implementation was identified, the affected result was discarded, and the experiment was rerun on fresh seeds with the corrected definition.
+- an early bounded-history-window off-by-one implementation was discarded and rerun on fresh seeds;
+- AP-RS5 included `candidate_outdegree`, which uses graph metadata from an unvisited candidate, so RS5 is described as graph-assisted rather than strictly visible-only;
+- AP-LM3A used hidden answer length to determine pre-query latency and is therefore treated as development provenance only;
+- AP-LM3B removed that privileged-information path and ran a fresh held-out confirmation using visible query text for pre-query cost.
 
-This repository treats such corrections as part of the scientific record rather than hiding them.
+These corrections are part of the scientific interpretation rather than hidden implementation details.
 
-## Recommended citation language
+## Claim boundary
 
-When describing the present result, use wording similar to:
+The repository supports computational claims about bounded control, deferred options, recursive query scheduling, observability, and resource/performance trade-offs in the tested environments.
 
-> In a Wikipedia-derived spectral/non-distance navigation bridge, a short-lived buffer of approximately four alternatives from the immediately previous decision point, combined with a compact one-shot counterfactual trajectory-utility rule, produced a reproducible early-budget gain. Human reading optimality remains untested.
+It does **not** establish:
+
+- an optimal human reading strategy;
+- a universal human working-memory capacity such as K=4 or K=8;
+- a causal cognitive explanation of observed human Wikispeedia BACK behavior;
+- improved human comprehension/retention from the proposed reading interface;
+- robustness to hallucinating real generative-LM answers.
+
+Navigation success, semantic similarity, and synthetic recursive-query reward are proxy/task outcomes, not direct measurements of human comprehension.
+
+## Recommended high-level description
+
+A cautious summary is:
+
+> Across controlled hypertext, real Wikispeedia diagnostics, synthetic recursive queries, and grounded natural-language query trees, the project found recurring value in deferring some uncertainties and evaluating actions by downstream/budget-conditioned value rather than immediate local relevance alone. The resulting full-information problem can be formulated analytically; the remaining difficulty is approximating that oracle under partial observability, bounded memory, latency, and uncertain answers. Human-reading and interface benefits remain hypotheses for external validation.
