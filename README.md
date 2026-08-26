@@ -1,134 +1,146 @@
-# Bounded Deferred-Link Reading
+# Bounded Deferred Reading and Querying
 
-Computational experiments on bounded-memory hypertext reading and navigation, testing **context-first reading**, **deferred link options**, and **one-shot trajectory-aware reconsideration**.
+Computational and analytic work on **when to keep reading, when to defer an uncertainty, and when to resolve it** under finite time, attention, and memory.
 
-> **Claim boundary:** this repository reports computational and hypothesis-generating results. It does **not** yet establish an optimal human reading strategy. Real anchor/context multi-hop validation and human comprehension/retention experiments remain open.
+> **Current phase:** the project has moved from broad experimental policy search to analytic modeling. The strongest working principle is: **resolve an uncertainty only when the expected value of resolving it now exceeds the expected value of deferring it.**
 
-## Core idea
+> **Claim boundary:** the repository contains computational, grounded-language, and analytic results. It does **not** yet establish an optimal human reading strategy or a validated human-comprehension interface.
 
-When link value is uncertain, a reader or agent need not immediately traverse every promising hyperlink. A compact alternative is:
+## Core model
 
-1. continue acquiring local context;
-2. keep a small, short-lived buffer of promising abandoned alternatives;
-3. reconsider those alternatives at the next decision point;
-4. allow at most one discretionary return when predicted trajectory-level utility is positive;
-5. avoid optimizing short-horizon gain at the expense of long-horizon success.
+A reader or agent maintains
 
-The current compact bridge policy uses the **immediately previous decision point**, keeps the **top 4 abandoned alternatives**, and scores them with a **3-feature Ridge counterfactual trajectory-utility model** using:
+- the current context,
+- a bounded frontier of unresolved items,
+- a remaining time/action budget.
 
-- candidate degree,
-- origin candidate count,
-- relative score versus the current best candidate.
+The key actions are:
 
-## Main findings
+`READ` — continue acquiring context,
 
-### 1. Context matters
+`ASK(q)` — resolve one unresolved item.
 
-Across the earlier information-acquisition experiments, link/anchor semantics were more useful when combined with the containing sentence or paragraph context than when considered alone. This motivates treating a hyperlink as an option whose value depends on the surrounding context, rather than as an instruction to click immediately.
+The central decision is an optimal-stopping comparison:
 
-### 2. One remembered runner-up is not universally sufficient
+`ASK(q) iff value(resolve q now) > value(defer q and keep reading)`.
 
-Under a distance-like controlled cue, remembering the immediate-parent runner-up was useful. Under a spectral/non-distance bridge, however, the same one-scalar idea failed and could materially hurt navigation. This rejected the universal form of the "one remembered alternative is enough" hypothesis.
+Deferral has positive option value because later context can resolve an unknown for free, reveal that it is unimportant, or make a later query better targeted.
 
-### 3. Rich history contains value, but all-history memory is unnecessary
+## What the experiments established
 
-Oracle experiments showed that richer frontiers can contain substantial unrealized value. Subsequent compression experiments found that almost all useful deployable signal in the tested bridge could be recovered from a bounded immediate-parent buffer.
+### Controlled hypertext
 
-### 4. Four candidates form a performance plateau in the current bridge
+A short-lived deferred frontier plus **trajectory/downstream utility** was consistently stronger than purely local value in the controlled spectral bridge. AP-S43 reproduced a compact top-4 one-shot policy:
 
-The confirmatory compact-policy replication (AP-S43) froze the model after selection and evaluated **12 new seeds × 500 tasks = 6,000 tasks**.
+- S@16: **+3.9167 pp**, 95% CI **[+3.133,+4.683]**;
+- S@32: **+1.1500 pp**, 95% CI **[+0.250,+2.067]**.
 
-- **S@16:** +3.9167 percentage points versus local-only, 95% cluster+task CI **[+3.133, +4.683] pp**, positive in **12/12** seeds.
-- **S@32:** +1.1500 pp, 95% CI **[+0.250, +2.067] pp**, positive in **9/12** seeds.
+The number four is environment-specific, not a human working-memory claim.
 
-A later capacity sweep (AP-S44) found that moving from K=4 to K=7 or K=9 produced no material additional gain. This is a computational bridge result, **not** evidence that human working-memory capacity is exactly four items.
+### Real Wikispeedia
 
-### 5. Reconsider quickly, not many pages later
+Real navigation showed strong short-range branch correction, but deployable visible trigger policies often failed despite large oracle opportunity. This exposed an important distinction:
 
-Delayed and persistent multi-page retention experiments did not establish an advantage over reconsidering at the next decision point. The strongest tested version is therefore a **short-lived option buffer**, not a long-lived collection of deferred tabs.
+> **The optimal action may exist while the visible state is insufficient to identify it.**
 
-### 6. Memory can be traded for a small amount of performance
+The project therefore separates the full-information control problem from the statistical observability problem.
 
-AP-S49 tested a resource-saving adaptive buffer on **12 new seeds × 500 tasks = 6,000 tasks**. Reducing the cap on high-branching states cut mean stored alternatives from **2.987 to 2.364 per forward page** (about **20.9% less candidate memory**) while losing only **0.433 pp at S@16** and **0.400 pp at S@32** relative to fixed K=4.
+### Recursive LM-style querying
 
-This supports a **resource/performance trade-off**. It does not show that reducing links under human cognitive load improves comprehension.
+AP-LM1 showed that learned **recursive subtree value** beats visible greedy selection:
 
-## Current computational policy
+- B=16: **+4.765 pp**, CI **[+4.449,+5.078]**;
+- B=32: **+7.034 pp**, CI **[+6.531,+7.546]**.
 
-```text
-Read/score the current context
-        |
-        +--> follow the current best candidate
-        |
-        +--> retain up to 4 strong abandoned alternatives
-                         |
-                    next decision point
-                         |
-              score retained alternatives
-              with trajectory utility
-                         |
-             utility > threshold (0.05)?
-                    /             \
-                  no               yes
-                  |                 |
-            continue local      one return
-                                   only
-```
+AP-LM2 added asynchronous slack and found additional benefit from latency/slack awareness and from recursive rather than immediate-value teachers.
 
-The current policy is **O(1) in history depth**: it keeps only the previous decision point's bounded candidate set. The tested constant is four candidate identities, not one scalar.
+AP-LM3B transferred the mechanism to grounded natural-language recursive answers on **1,197 held-out missions / 753 target clusters**:
 
-## Human-readable hypothesis
+- recursive vs matched immediate, B=12: **+3.112 pp**, CI **[+2.292,+3.951]**, 8/8 buckets positive;
+- recursive vs visible greedy: **+3.109 pp**, CI **[+2.238,+4.010]**, 8/8 positive;
+- K=8 was within **0.551 pp** of the full frontier;
+- at B=20 the full policies were essentially saturated near oracle.
 
-A cautious translation for human hypertext reading is:
+This supports the general prediction that scheduling matters most when the information budget is binding.
 
-> **Do not treat every hyperlink as an immediate command to leave the page. Read enough surrounding context to understand why the link matters, keep only a few promising alternatives in mind or in an external note, and reconsider them soon—preferably once—after additional context has changed your estimate of their value.**
+## Analytic formulation
 
-This is a hypothesis for human reading, not yet a validated prescription.
+For a known recursive query tree, each query `q` has cost `c_q`, reward `r_q`, and children revealed after querying. The exact full-information problem is a precedence-constrained tree knapsack and can be solved by dynamic programming.
 
-## What failed or remained uncertain
+The correct object is a **budget-conditioned recursive value curve** `V(q,b)`, not one static importance scalar.
 
-The repository intentionally preserves negative results because they materially changed the theory:
+See [`docs/ANALYTIC_THEORY.md`](docs/ANALYTIC_THEORY.md).
 
-- large recurrent or nonlinear state did not provide a stable universal advantage;
-- global/all-history frontier memory was not needed for the best compact deployable policy;
-- immediate-parent runner-up memory was not cue-universal;
-- simple confidence/reliability gates did not reliably fix high-noise behavior;
-- repeatedly applying a one-shot trajectory gate degraded performance;
-- optimizing S@16 alone could strongly damage S@32;
-- persistent multi-page deferred-link retention was not supported;
-- task-demand adaptive K=3/4/5 did not materially outperform fixed K=4.
+## Interface implication
 
-## Research status
+The theory suggests that users should not be required to estimate importance manually.
 
-**Ready for:** public computational / hypothesis-generating release.
+A better reading/chat interface can:
 
-**Not yet ready for:** a claim of an "optimal human hyperlink reading strategy."
+1. predict high-downstream-value terms or passages;
+2. emphasize them visually, e.g. restrained bold/underline/markers;
+3. allow one-click context-conditioned questions;
+4. keep unresolved items in a deferred frontier rather than opening every explanation immediately;
+5. reprioritize or retire items as later context arrives;
+6. choose not only **what** and **when** to explain, but **how deeply**.
 
-The two major external-validity gates are:
+This points beyond ordinary linear chat toward:
 
-1. **400+ independent real anchor/context semantic tasks**, preferably with real multi-hop outcomes;
-2. **human experiments** measuring comprehension, retention, reading time, navigation behavior, and cognitive load.
+`main reading stream + AI-ranked unresolved frontier + chat/explanation channel`.
+
+See [`docs/INTERFACE_IMPLICATIONS.md`](docs/INTERFACE_IMPLICATIONS.md).
+
+## Current research interpretation
+
+The project is no longer mainly asking:
+
+> Which heuristic should we try next?
+
+It is now asking:
+
+> **How closely can a bounded, partially observed reader/agent approximate the analytic full-information oracle?**
+
+The remaining variables are principally:
+
+- observability of downstream importance,
+- contextual self-resolution,
+- bounded frontier capacity,
+- asynchronous latency,
+- stochastic / hallucinating answers,
+- interface costs and human cognitive load.
+
+## Minimal remaining work
+
+The project is close to a reasonable stopping point for the current computational phase. The highest-value remaining work is deliberately small:
+
+1. analytic sanity checks / propositions for defer-vs-resolve thresholds and budget saturation;
+2. one minimal generative-LM transfer check if execution infrastructure permits;
+3. one small interface study comparing ordinary chat with AI highlighting + deferred frontier;
+4. public synthesis rather than another broad parameter sweep.
 
 ## Repository map
 
-- `docs/RESEARCH_SUMMARY.md` — research program, major hypothesis revisions, and claim boundaries.
-- `docs/HUMAN_READING_HYPOTHESIS.md` — human-readable theory and proposed human experiment.
-- `docs/EXPERIMENT_TIMELINE.md` — compact timeline of decisive experiments.
-- `results/` — selected machine-readable confirmatory result files.
-- `NOTICE.md` — data/reproducibility and external-dataset notes.
+- `docs/ANALYTIC_THEORY.md` — Bellman/tree-knapsack formulation and current theoretical interpretation.
+- `docs/INTERFACE_IMPLICATIONS.md` — implications for highlighting, deferred questions, frontier chat, and future reading interfaces.
+- `docs/RESEARCH_SUMMARY.md` — historical evolution of the experimental program.
+- `docs/HUMAN_READING_HYPOTHESIS.md` — cautious human-reading translation and proposed study.
+- `docs/EXPERIMENT_TIMELINE.md` — timeline of decisive experiments.
+- `results/` — selected machine-readable confirmatory results.
 
-## Reproducibility note
+## Reproducibility and boundary
 
-The experiments use Wikipedia-derived graph data and locally generated intermediate artifacts. External datasets are **not redistributed here unless their licenses permit it**. Public releases should prefer download/preprocessing instructions over copying third-party datasets into the repository.
+External Wikipedia/Wikispeedia resources are not redistributed unless licensing permits it. Navigation performance, semantic similarity, and synthetic query reward should not be presented as direct measurements of human comprehension.
 
 ## License
 
-Code and repository text are released under the repository's MIT License unless a file states otherwise. Third-party datasets and derived resources remain subject to their original licenses.
+Repository code and original text are MIT-licensed unless otherwise noted. Third-party data and derived resources remain subject to their original licenses.
 
 ---
 
 ## 日本語要約
 
-現時点の計算実験では、未知のハイパーテキストに対して「リンクを見たら即座に飛ぶ」より、**まず周辺文脈を読み、直前の判断点で捨てた有望候補を4個程度だけ短時間保持し、次の判断点で一度だけ再評価する**方策が有望です。7〜9候補へ増やしても大きな追加利得はなく、何ページも候補を保持し続ける方策も支持されませんでした。
+この研究で見えてきた中心原理は、**「分からないものを見つけた瞬間に全部解決する」のではなく、まず読み続け、文脈で自然解決する可能性を残し、それでも下流の理解に重要になったものだけを必要な時点で問い合わせる**というものです。
 
-ただし、これは人間の読解実験ではありません。4という値を人間のworking-memory定数と解釈することもできません。人間向けには「少数の保留リンクを持ち、文脈が増えたところですぐ再評価する」という検証可能な仮説として扱います。
+さらに重要度判定まで読者だけに任せる必要はありません。AIが下流依存の大きそうな語句を太字・下線などで控えめに強調し、質問候補を保留frontierに保存し、後続文脈に応じて重要度を更新するインターフェースが自然に導かれます。
+
+したがって将来像は、単なる一本道のチャットではなく、**本文 + AI重要度表示 + 保留質問frontier + チャット**です。現在の研究フェーズは、この方策をさらに実験で探索する段階から、解析的oracleを定義し、そのoracleを限られた観測・記憶・計算でどこまで近似できるかを調べる段階へ移っています。
