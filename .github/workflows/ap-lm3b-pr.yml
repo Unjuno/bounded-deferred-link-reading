@@ -10,6 +10,8 @@ on:
 permissions:
   contents: read
 
+# Temporary branch-only runner used to execute AP-LM4A from a workflow path
+# already registered on main. Revert this file before merging scientific code.
 jobs:
   ap-lm4a-pilot:
     runs-on: ubuntu-24.04
