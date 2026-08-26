@@ -2,123 +2,111 @@
 
 ## Status
 
-This document translates the computational findings into a **testable human-reading hypothesis**. It is not a validated prescription.
+This document translates the computational program into **testable human-reading hypotheses**. It is not a validated prescription.
 
-## Bounded Contextual Deferred-Link Hypothesis
+The early project emphasized a very concrete hyperlink rule: retain a few recent alternatives and reconsider them soon. Later work showed that the more general object is not a particular K value or one fixed reconsideration schedule. The current hypothesis is broader:
 
-When hyperlink value is uncertain, a human reader may benefit from treating links as **deferred options** rather than immediate commands to leave the current text.
+> **When an uncertainty appears, do not assume it must be resolved immediately. Continue reading when the expected value of more context exceeds the value of resolving now; resolve it when its downstream importance and expected explanation value become large enough.**
 
-A practical version is:
+## Why deferral may help
 
-> Read enough of the current passage to build context. Keep only a few promising links as short-lived options. Reconsider those options soon after additional context has been acquired, and follow at most one if it now appears more useful than continuing locally.
+Continuing to read can:
 
-The hypothesis has four parts.
+- resolve an unfamiliar term from later context;
+- reveal that it is peripheral;
+- show that it is a prerequisite for what follows;
+- improve the wording and scope of a later question.
 
-### 1. Context-first valuation
+Thus `DEFER` is not equivalent to `DISCARD`. It preserves an option to resolve later.
 
-The meaning and usefulness of a link depend on the sentence, paragraph, and current reading goal. Therefore the reader should first understand why the link appears in the current context.
+For an unresolved item `q` in context `s`, the qualitative decision is:
 
-### 2. Small bounded option buffer
+`resolve now` versus `defer and keep reading`.
 
-Do not attempt to remember every possible branch. Keep only a small number of promising alternatives. In the current computational bridge, performance plateaus around four retained candidates, while 7–9 provide little additional gain.
+The analytic formulation in `docs/ANALYTIC_THEORY.md` makes this an optimal-stopping/control problem.
 
-**Important:** the computational value K≈4 is not evidence that human working-memory capacity is exactly four links.
+## Downstream importance, not difficulty alone
 
-### 3. Short deferral, not indefinite postponement
+A difficult term is not automatically worth interrupting reading for. A concept can be obscure but irrelevant to the rest of the document. Conversely, a simple-looking concept may be central to every later argument.
 
-The current experiments favor reconsideration at the next decision point. Retaining the same pending alternatives across several pages did not improve the tested navigation outcome.
+A human-facing prediction is therefore:
 
-Thus the hypothesis is better described as a **short-lived option buffer** than as "save links and come back much later."
+> The value of clarification should depend strongly on **downstream dependency**—how much later understanding depends on the concept—not only on current subjective difficulty.
 
-### 4. One deliberate reconsideration
+## Bounded unresolved state
 
-Repeated discretionary returns degraded performance in the computational bridge. The current hypothesis therefore favors one deliberate reconsideration over repeated back-and-forth navigation.
+The computational experiments often found diminishing returns from retaining large frontiers, but the capacity needed depended on the environment:
 
-## Human-readable rule
+- the controlled spectral bridge plateaued near K≈4;
+- AP-LM1 required about K=8 among the tested values;
+- AP-LM2 again reached near-full performance around K=4;
+- AP-LM3B needed more capacity than the simplest fixed-link bridge.
 
-> **Do not click every link immediately. Read the surrounding context, keep a few promising links in mind or in a note, and at the next natural stopping point reconsider which one—if any—would improve your understanding most. Then choose one and avoid repeated hopping.**
+These values do **not** estimate a universal human working-memory capacity.
 
-## Why this might work
+The human hypothesis is only that carrying many unresolved items has a cost, so external memory or AI assistance may help preserve useful unresolved options without forcing them into working memory.
 
-Let the reader's current context representation be \(C_t\), and let \(l\) be a pending link. The reader can only estimate its utility:
+## Relation to observed Wikispeedia behavior
 
-\[
-\hat U(l \mid C_t).
-\]
+Real successful Wikispeedia paths showed strong target-directed semantic progress, and BACK behavior was predominantly short-range. Short-range return followed by branch replacement was associated with semantic correction.
 
-After reading more locally, the context changes to \(C_{t+1}\), allowing a revised estimate:
+That pattern is compatible with quick reconsideration, but it is observational. It does not prove that humans were using the computational deferred-option mechanism.
 
-\[
-\hat U(l \mid C_{t+1}).
-\]
+## A conservative human-readable rule
 
-Deferral is useful when the expected value of better-informed choice exceeds the cost of continuing to read locally.
+A cautious practical translation is:
 
-Conceptually:
+> **If something is unclear, first ask whether you need it to understand what comes next. If not, keep reading. If it becomes a prerequisite, clarify it at the minimum depth needed to continue. Keep unresolved but potentially important items externally rather than trying to solve or memorize everything at once.**
 
-\[
-\text{defer if } \operatorname{E}[\text{better decision after more context}] > \text{cost of waiting}.
-\]
+This is still a hypothesis, not an established optimal reading method.
 
-The computational results further suggest that the relevant decision target is not "is this link locally attractive?" but:
+## AI-assisted reading hypothesis
 
-> **If I switch to this option now and continue using the same imperfect reading policy, will the final outcome improve?**
+The current interface proposal makes an additional, unvalidated prediction: AI can reduce two burdens that unaided readers face.
 
-That is a trajectory-level, not purely local, utility question.
+1. **candidate detection** — noticing which unclear items are likely to matter downstream;
+2. **explanation selection** — choosing whether no explanation, a one-line gloss, an example, or a detailed explanation is appropriate.
 
-## Working-memory interpretation
+A minimal interface can therefore:
 
-A possible human extension is that context, goal, and pending links compete for limited working-memory resources. This motivates a shared-budget view:
+- sparsely emphasize high-downstream-dependency spans;
+- let the reader choose `No explanation / 1 line / Example / Detailed / Later`;
+- keep routine supplements in the reading flow;
+- learn explanation needs from those choices;
+- retain deferred items internally rather than requiring the reader to manage a visible backlog.
 
-\[
-M = M_{context} + M_{goal} + M_{pending\ links}.
-\]
+See `docs/INTERFACE_PROPOSAL.md`.
 
-The computational AP-S49 result is compatible with a resource/performance trade-off: using fewer pending options reduced candidate memory by about 21% for a small performance loss. However, AP-S49 used graph branching as a task-load proxy, not measured human cognitive load.
+## Proposed human validation
 
-Therefore the human prediction is deliberately weaker:
+A compact first study could compare:
 
-> Under higher cognitive load, readers may prefer fewer pending links to preserve resources for context representation, even if this sacrifices a small amount of search performance.
+1. **document + ordinary chat**;
+2. **document + sparse AI salience + explanation-choice buttons**;
+3. **the same interface with personalized explanation defaults learned from prior choices**.
 
-This prediction requires direct human testing.
+Primary outcomes:
 
-## Proposed human experiment
+- comprehension/task success;
+- information acquired per unit time;
+- total reading time;
+- number and depth of explanations.
 
-### Conditions
+Secondary outcomes:
 
-1. **Immediate-click:** participants may follow links as soon as they appear.
-2. **Straight-through:** participants are instructed to minimize link traversal during the initial passage.
-3. **Bounded deferred-link:** participants read local context first, retain up to a small number of promising links, and reconsider them at the next natural boundary.
-4. Optional capacity arms: pending-link cap 1, 2, 4, and 7.
+- context-switch time;
+- explanations that later proved unnecessary because context resolved the issue;
+- subjective interruption/cognitive load;
+- calibration of the AI's importance/explanation predictions.
 
-### Outcomes
+## Falsifiable predictions
 
-Primary:
+- Immediate explanation of every difficult item should be inefficient when many items later self-resolve or prove irrelevant.
+- Downstream-dependency-based salience should be more useful than difficulty-only highlighting.
+- Reader-controlled explanation depth should reduce unnecessary explanation cost relative to fixed verbosity.
+- Sparse interaction history should allow better personalization than a non-personalized fixed explanation policy.
+- There should be a point at which more unresolved/frontier state yields diminishing practical value.
 
-- comprehension score,
-- delayed retention,
-- information acquisition per unit time.
+## Boundary
 
-Secondary:
-
-- reading/navigation time,
-- number of link traversals,
-- backtracking count,
-- self-reported cognitive load,
-- confidence calibration,
-- proportion of pending links eventually selected.
-
-### Key falsifiable predictions
-
-- A bounded deferred-link condition should outperform immediate indiscriminate traversal when link value is uncertain.
-- Increasing the pending-link buffer beyond a modest size should show diminishing returns.
-- Repeated reconsideration/backtracking should not provide proportional benefit.
-- The optimal buffer may shrink under high cognitive load if context representation competes with pending-link memory.
-
-## Japanese summary
-
-計算実験を人間向けに翻訳すると、仮説は次のようになります。
-
-> **リンクを見つけてもすぐ飛ばず、まず周囲の文章を読んで文脈を作る。重要そうなリンクだけを少数保留し、次の自然な区切りで一度だけ再評価する。その時点で今の流れより価値が高いリンクがあれば一つ選び、何度も行ったり来たりしない。**
-
-現時点では、これは検証可能な読解仮説であり、人間に対して最適だと実証された方法ではありません。
+The repository has **not** yet shown that these predictions improve human comprehension, retention, or cognitive load. Navigation performance, semantic similarity, synthetic query reward, and grounded-language proxy utility are not substitutes for direct human outcomes.
