@@ -1,0 +1,38 @@
+name: AP-LM3B grounded text confirmation
+
+on:
+  pull_request:
+    paths:
+      - 'docs/PREREG_AP_LM3B_CONFIRM.md'
+      - 'experiments/ap_lm3b_confirm.py'
+      - '.github/workflows/ap-lm3b-confirm-pr.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  ap-lm3b-confirm:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install CPU dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu torch
+          python -m pip install numpy pandas beautifulsoup4 lxml sentence-transformers scikit-learn
+      - name: Run AP-LM3B held-out confirmation
+        env:
+          HF_HUB_DISABLE_TELEMETRY: '1'
+        run: PYTHONPATH=. python experiments/ap_lm3b_confirm.py
+      - name: Upload confirmatory artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ap-lm3b-confirm-results
+          path: |
+            artifacts/ap_lm3b_confirm/AP_LM3B_CONFIRM_RESULTS.json
+            artifacts/ap_lm3b_confirm/AP_LM3B_CONFIRM_SUMMARY.md
+          if-no-files-found: error
