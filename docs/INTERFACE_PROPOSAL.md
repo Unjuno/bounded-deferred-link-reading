@@ -1,224 +1,226 @@
-# Interface Proposal: Deferred-Query Reading with AI-Guided Salience
+# Interface Proposal: Low-Friction Adaptive Reading
 
 ## Status
 
-This document is a **design proposal derived from the current theory and computational results**. It is not a validated human-comprehension result.
+This is a **design proposal derived from the analytic model and computational findings**. It is not a validated human-comprehension result.
 
-The core design claim is narrower than “chat is the optimal interface”:
+The strongest design implication is narrower than “chat is the optimal interface”:
 
-> A reading interface should help the user identify high-downstream-value uncertainties, preserve them without forcing immediate resolution, and make context-conditioned explanation cheap when resolution becomes worthwhile.
+> A reading interface should help identify high-downstream-value uncertainties without forcing the reader to stop, and should make the right amount of explanation cheap when it becomes useful.
 
-The interface therefore externalizes two burdens that ordinary reading leaves to the user:
+The proposal therefore separates three problems:
 
-1. **importance estimation** — which unclear terms are likely to matter later;
-2. **deferred-query memory** — which unresolved items should remain available for later reconsideration.
+1. **salience** — what is likely to matter later;
+2. **resolution timing** — should it be explained now or left alone;
+3. **explanation depth** — if explained, how much is enough.
 
-## Proposed layout
+## V1: the smallest useful interface
 
-### 1. Main reading pane
+The first version should be deliberately simple.
 
-The document remains primary. The interface should not continuously replace reading with explanations.
+### 1. Keep the document primary
 
-AI predicts which spans have high expected downstream dependency and applies restrained emphasis.
+The main surface is still ordinary text. The system does not replace every difficult passage with generated explanation.
 
-Possible presentation:
+AI may apply **sparse, restrained emphasis** to concepts that are likely to have high downstream dependency.
 
-- **bold** for the highest-priority concepts;
-- lighter underline or margin marker for medium-priority concepts;
-- no mark for low-priority or likely self-resolving concepts.
+The target is not “hard word detection.” A difficult term that never matters again may deserve no mark; a simple-looking concept that the rest of the argument depends on may deserve emphasis.
 
-The ranking target is not “difficulty” alone. It is closer to expected future value:
+A rough internal priority is:
 
-`priority(q) ~= unresolvedness * downstream_dependency * (1 - contextual_resolution_probability) + recursive_gain - query_cost`.
+`priority(q) ~= unresolvedness * downstream_dependency * (1 - contextual_resolution_probability) - interruption_cost`
 
-The exact score is model-dependent; the design principle is that **important-to-understand-later** is more useful than simply **hard-to-understand-now**.
+Recursive information value can be added when a concept is likely to open useful downstream inquiry.
 
-### 2. Inline query affordance
+### 2. Emphasis must not imply interruption
 
-Selecting or activating a highlighted span should expose a small action menu rather than an automatic popup.
+Highlighted text should remain readable as ordinary text. No explanation needs to open automatically.
 
-Suggested actions:
+This preserves the value of continuing to read: later context may explain the concept for free, show that it is irrelevant, or make a later explanation easier to target.
 
-- `1-line explanation`
-- `Explain in this context`
-- `Why does this matter here?`
-- `Keep for later`
-- `Ask a custom question`
+### 3. One small explanation-choice control
 
-The surrounding text should be supplied automatically to the assistant so the user does not need to reconstruct context manually.
+Activating an emphasized span can expose a compact set of actions such as:
 
-### 3. Deferred unresolved frontier
+- `No explanation`
+- `1 line`
+- `Example`
+- `Detailed`
+- `Later`
 
-Unresolved items should be stored in a compact frontier rather than in the user's working memory.
+A custom chat question can remain available, but it does not need to be the default interaction.
 
-Each item can retain:
+These choices have two roles at once:
 
-- the original span;
-- source location;
-- current predicted importance;
-- why it may matter downstream;
-- whether later context has partially or fully resolved it;
-- optional explanation history.
+1. they let the reader control interruption and explanation depth;
+2. they provide training signals about what this reader already knows and how they prefer explanations.
 
-The frontier should be dynamically reprioritized as the user reads.
+### 4. Put short explanations back into the reading flow
 
-Possible statuses:
+For `1 line` or `Example`, the lowest-friction presentation is an inline supplement immediately below/adjacent to the relevant text, followed by the original document.
 
-- `important now`
-- `pending`
-- `likely resolved by context`
-- `probably unnecessary for current goal`
-
-A small visible top set is preferable to showing a large unresolved backlog. Lower-priority items can remain latent/searchable.
-
-### 4. Chat as an explanation channel, not the main navigation structure
-
-Ordinary chat encourages depth-first recursion:
-
-`question -> answer -> follow-up -> answer -> deeper follow-up ...`
-
-The proposed interface instead keeps three separate objects:
-
-1. the **main reading stream**;
-2. the **unresolved frontier**;
-3. the **chat/explanation channel**.
-
-When an answer introduces a new unclear concept, that concept should normally be added back to the frontier rather than automatically becoming the next question.
-
-This preserves the user's original task and reduces accidental recursive detours.
-
-### 5. Adaptive explanation depth
-
-The action should be modeled as `(question, explanation depth)`, not just `question`.
-
-Useful depth levels:
-
-- **gloss** — one sentence;
-- **short** — enough to continue reading;
-- **example** — explanation plus one example;
-- **formal** — derivation or technical detail;
-- **deep** — tutorial-level treatment.
-
-The default should depend on downstream dependency. A peripheral term may need only a gloss; a concept supporting the rest of the document may justify a deeper explanation.
-
-### 6. Threshold-based proactive guidance
-
-The assistant should not constantly interrupt the user.
-
-Proactive prompts should occur mainly when an item's estimated resolution value crosses a threshold relative to continued reading.
-
-Examples:
-
-- `This concept is now used as a prerequisite in the next section.`
-- `You can keep reading; this term is explained shortly.`
-- `A one-line definition is probably sufficient here.`
-
-The system should also be allowed to recommend **not asking yet**.
-
-## Intended interaction loop
+The interaction should feel like:
 
 ```text
-READ
-  |
-  +-- unclear span appears
-  |       |
-  |       +-- AI estimates downstream importance
-  |       +-- optional restrained emphasis
-  |       +-- add to unresolved frontier
-  |
-continue reading
-  |
-  +-- context may resolve / downgrade / upgrade item
-  |
-reconsideration point
-  |
-  +-- if resolve-value <= defer-value: keep reading
-  |
-  +-- if resolve-value > defer-value: surface one-click explanation
-                                  |
-                                  +-- answer may add new unknowns
-                                      back to frontier
+original text
+short contextual supplement
+original text continues
 ```
 
-## Why this differs from common reading assistants
+rather than:
 
-The proposal is not simply “put chat next to a document.”
+```text
+original text -> separate chat -> answer -> manually recover reading position
+```
 
-It adds three control mechanisms:
+Chat remains useful for custom or deep questions, but routine clarification need not cause a context switch.
 
-1. **AI-guided salience** — the system helps decide what may matter;
-2. **deferred resolution** — highlighted uncertainty does not imply immediate explanation;
-3. **frontier management** — unresolved questions are reprioritized and retired over time.
+## Personalization without requiring a complete personal-data model
 
-These are direct consequences of the defer-vs-resolve formulation.
+The interface does not need a perfect model of the reader before it becomes useful.
 
-## Minimal product specification
+Each choice supplies an observation of the form:
 
-A minimally useful prototype could contain:
+`(concept, local context, document goal) -> chosen explanation mode`
 
-- document viewer with three-level AI emphasis;
-- click/selection actions for gloss, contextual explanation, or defer;
-- side panel showing the top unresolved items;
-- automatic priority updates as reading position changes;
-- chat anchored to the selected span and local context;
-- answer-depth selector;
-- automatic return of follow-up unknowns to the frontier.
+Over time the system can estimate:
 
-No autonomous interruption is required for the first prototype.
+`P(explanation mode | concept/context, reader history)`.
+
+Examples of learnable tendencies:
+
+- mathematical prerequisites usually need no explanation;
+- domain-specific terminology often needs a one-line gloss;
+- mechanism questions are better with examples;
+- some readers prefer formal derivations, others prefer minimal continuation-oriented explanations.
+
+The useful user state is therefore closer to a **minimal knowledge-and-explanation model** than a broad collection of unrelated personal data.
+
+## Hidden deferred frontier
+
+The analytic model benefits from a frontier of unresolved items, but the interface does not have to expose a large frontier panel.
+
+The system can internally retain items that were:
+
+- noticed but not explained;
+- explicitly marked `Later`;
+- introduced by an explanation;
+- likely to become important downstream.
+
+As reading continues, the system can silently:
+
+- retire items resolved by context;
+- lower items that turn out to be peripheral;
+- raise items that become prerequisites.
+
+A visible “saved for later” list can be optional. The user should not inherit the system's bookkeeping burden.
+
+## Progressive automation
+
+A sensible progression is:
+
+### Stage A — manual depth choice
+AI marks sparse high-value candidates; the reader chooses `No explanation / 1 line / Example / Detailed / Later`.
+
+### Stage B — personalized defaults
+The system preselects the likely explanation mode but waits for the reader to activate it.
+
+### Stage C — conservative automatic supplements
+When confidence is high and interruption cost is low, the system may insert a very short supplement automatically. The reader can disable or undo this behavior.
+
+### Stage D — continuous adaptive reading stream
+In the long-run interface, the system may continuously decide what text to show next: original material, a short prerequisite, an example, a compressed known section, or a deeper explanation.
+
+The information stream can continue without requiring explicit question/answer turns. Internally, the system still solves a defer-versus-resolve scheduling problem.
+
+Crucially, “continuous” means **the system need not block waiting for a query cycle**. It does not mean the reader cannot pause, slow down, inspect the source, or take control.
+
+## Role of chat
+
+Chat is still useful, but its role becomes clearer:
+
+- custom questions;
+- deep explanation;
+- comparison or synthesis across passages;
+- user correction of the system's assumptions.
+
+For routine clarification, chat can be an underlying capability rather than the main navigation structure.
+
+The long-run direction may therefore be less “better linear chat” and more **chat capabilities embedded into an adaptive reading stream**.
+
+## Why this follows from the research
+
+The proposal maps directly to the defer-vs-resolve formulation:
+
+- sparse emphasis reduces the cost of detecting potentially valuable unknowns;
+- optional explanation preserves contextual self-resolution;
+- the `Later` option preserves query option value;
+- explanation-depth controls trade information gain against time/attention cost;
+- interaction history improves observability of the reader's knowledge state;
+- a hidden frontier prevents recursive depth-first detours from becoming the default UI.
+
+## Minimal prototype
+
+A first prototype only needs:
+
+1. a document viewer;
+2. sparse AI emphasis on predicted high-downstream-dependency spans;
+3. the five explanation actions above;
+4. inline contextual explanation;
+5. logging of choices for personalization;
+6. a normal custom-chat escape hatch.
+
+It does **not** require a visible frontier panel, autonomous popups, or a complete long-term personal profile.
 
 ## Testable interface hypotheses
 
-These remain hypotheses until a human study is run.
+These remain hypotheses until directly tested with readers.
 
-### H-UI1 — AI salience reduces candidate-detection cost
+### H-UI1 — downstream salience beats difficulty-only salience
+Emphasizing concepts based on expected downstream dependency should be more useful than highlighting merely difficult/rare terms.
 
-AI-ranked emphasis should reduce the effort required to identify which unclear items are worth attention relative to plain text.
+### H-UI2 — optional explanation beats forced explanation
+Sparse emphasis plus reader-controlled explanation should preserve more contextual self-resolution and impose less interruption than automatic popovers at every difficult item.
 
-### H-UI2 — Deferred access beats forced explanation
+### H-UI3 — explanation-mode choices support useful personalization
+A small history of `No explanation / 1 line / Example / Detailed / Later` choices should predict later explanation needs better than a non-personalized fixed verbosity policy.
 
-Emphasis plus optional/deferred explanation should outperform automatically opening explanations at every difficult term because forced explanations remove contextual self-resolution and add interruption cost.
+### H-UI4 — inline supplements reduce context-switch cost
+Short explanations embedded in the reading flow should reduce navigation/interruption overhead relative to moving every clarification into a separate linear chat.
 
-### H-UI3 — Dynamic reprioritization beats static highlighting
-
-If importance changes with later context, updating salience/frontier rank should outperform static pre-highlighting.
-
-### H-UI4 — Frontier chat beats linear recursive chat
-
-Returning follow-up unknowns to a ranked frontier should reduce unnecessary depth-first exploration compared with standard linear chat.
-
-### H-UI5 — Adaptive depth reduces explanation cost
-
-Selecting answer depth according to downstream dependency should reduce explanation time/tokens without materially reducing task success.
+### H-UI5 — conservative automation can approach a continuous adaptive stream
+Once the model has enough evidence about the reader, selectively auto-inserting high-confidence short supplements should reduce manual interaction without materially increasing unwanted explanations.
 
 ## Minimal validation study
 
-If one human-interface experiment is eventually run, the clean comparison is:
+If one human-interface experiment is later run, a clean progression is:
 
-1. plain document + ordinary chat;
-2. AI salience highlighting + ordinary chat;
-3. AI salience highlighting + deferred frontier + chat.
+1. document + ordinary chat;
+2. sparse AI salience + explanation-choice buttons;
+3. the same interface with personalization from prior choices.
 
-Primary measurements:
+Possible outcomes:
 
 - comprehension/task success;
 - total reading time;
-- number of queries;
-- explanation time/tokens;
-- queries that later proved unnecessary because context resolved them;
-- interruption/cognitive-load ratings.
+- number and depth of explanations;
+- explanations later shown to have been unnecessary;
+- time lost to context switching;
+- subjective interruption/cognitive load.
 
-The most informative comparison is (2) vs (3): highlighting tests candidate detection, while the frontier tests whether deferred resolution adds value beyond salience guidance.
+A future fourth condition could test conservative automatic inline supplements, but it is not needed for the first validation.
 
 ## Design boundary
 
-The computational work supports the **structure of the proposal**, not its human-factors effectiveness.
+The computational work supports the **structure of the optimization problem**, not the human-factors superiority of this exact UI.
 
-In particular, the current evidence does not establish:
+It does not yet establish:
 
-- the optimal visual emphasis style;
-- how much text should be highlighted;
-- the optimal number of visible frontier items for humans;
-- whether proactive prompts improve or harm concentration;
-- whether this interface improves retention or comprehension.
+- the best visual emphasis style or density;
+- the optimal button labels;
+- how accurately AI can infer individual knowledge from sparse interaction;
+- whether visible or hidden frontiers work better for humans;
+- when automatic supplements become helpful rather than distracting;
+- whether a continuous adaptive stream improves comprehension or retention.
 
-Those are interface questions, not conclusions already established by the navigation/query experiments.
+Those are design hypotheses derived from the theory, not results already demonstrated by the navigation/query experiments.
