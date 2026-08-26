@@ -1,0 +1,69 @@
+{
+  "name": "AP-LM3B grounded natural-language visible-query-cost confirmation",
+  "decision": "PASS",
+  "primary_n": 1197,
+  "h1_recursive_vs_immediate_b12": {
+    "mean": 0.03112410802165166,
+    "ci95": [0.022917010423885442, 0.03951320177452998],
+    "positive_targets": 413,
+    "n_targets": 753
+  },
+  "h1_buckets": {
+    "means": [0.039646123658540054, 0.028905008643238198, 0.023518076982152185, 0.03879482264801068, 0.01626812170339395, 0.03232200814485124, 0.036213128965304986, 0.033746249831269184],
+    "positive": 8
+  },
+  "pass_h1": true,
+  "h2_recursive_vs_greedy_b12": {
+    "mean": 0.031093446769369388,
+    "ci95": [0.02237556740016335, 0.04009834058892474],
+    "positive_targets": 409,
+    "n_targets": 753
+  },
+  "h2_buckets": {
+    "means": [0.03798856676993055, 0.03949594812781043, 0.0228402800555881, 0.023228413783419336, 0.02615772181967553, 0.025944084908872813, 0.03418797792502573, 0.030628112185046994],
+    "positive": 8
+  },
+  "support_h2": true,
+  "safety_recursive_vs_immediate_b20": {
+    "mean": -0.00007480447363243343,
+    "ci95": [-0.00020293039643645076, 0.000014406793893537977],
+    "positive_targets": 34,
+    "n_targets": 753
+  },
+  "pass_safety": true,
+  "aggregate": {
+    "12": {
+      "greedy": {"n": 1197, "mean_oracle_fraction": 0.8505098332112125, "mean_retained": 6.245191260980736},
+      "imm": {"n": 1197, "mean_oracle_fraction": 0.8496252960420008, "mean_retained": 6.1416881851092375},
+      "rec_full": {"n": 1197, "mean_oracle_fraction": 0.8808313607870673, "mean_retained": 7.977535650092042},
+      "rec_k2": {"n": 1197, "mean_oracle_fraction": 0.36202827600190723, "mean_retained": 1.691952102478418},
+      "rec_k4": {"n": 1197, "mean_oracle_fraction": 0.708546540144792, "mean_retained": 2.8804061922482975},
+      "rec_k8": {"n": 1197, "mean_oracle_fraction": 0.8753241484118548, "mean_retained": 6.272324389617624}
+    },
+    "20": {
+      "greedy": {"n": 1197, "mean_oracle_fraction": 0.9998899461843102, "mean_retained": 5.2100814399834015},
+      "imm": {"n": 1197, "mean_oracle_fraction": 0.9999578606224288, "mean_retained": 5.081292214741647},
+      "rec_full": {"n": 1197, "mean_oracle_fraction": 0.9998698698076427, "mean_retained": 6.457919008809102},
+      "rec_k2": {"n": 1197, "mean_oracle_fraction": 0.3352130302740823, "mean_retained": 1.691952102478418},
+      "rec_k4": {"n": 1197, "mean_oracle_fraction": 0.6550776434696125, "mean_retained": 2.8799805249053367},
+      "rec_k8": {"n": 1197, "mean_oracle_fraction": 0.9166739211730355, "mean_retained": 5.444981490599211}
+    }
+  },
+  "capacity_full_minus_k_b12": {"2": 0.51880308478516, "4": 0.17228482064227524, "8": 0.005507212375212456},
+  "resource_success_k8": true,
+  "fit_n": 700,
+  "confirm_n_requested": 1200,
+  "confirm_target_count": 1331,
+  "edge_coverage": 0.9672844964214812,
+  "body_coverage": 1.0,
+  "teacher_rows": 116556,
+  "run_id": 32981900658,
+  "artifact_id": 9611988971,
+  "artifact_sha256": "93a9c8e27ef235abed99a74c9c5ccb13c09a7701b6aea3ed3f265056ea939566",
+  "boundaries": [
+    "retrieval-backed grounded answer surrogate, not generative LM",
+    "hallucination absent",
+    "visible anchor-derived query cost, not measured wall-clock latency",
+    "semantic utility is not human comprehension"
+  ]
+}
