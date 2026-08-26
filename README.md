@@ -2,27 +2,23 @@
 
 Computational and analytic work on **when to keep reading, when to defer an uncertainty, and when to resolve it** under finite time, attention, and memory.
 
-> **Current phase:** the project has moved from broad experimental policy search to analytic modeling. The strongest working principle is: **resolve an uncertainty only when the expected value of resolving it now exceeds the expected value of deferring it.**
+> **Current phase:** broad experimental policy search is essentially complete. The project now treats deferred reading/querying as an optimal-control problem and uses experiments mainly as validation of theory-derived predictions.
 
-> **Claim boundary:** the repository contains computational, grounded-language, and analytic results. It does **not** yet establish an optimal human reading strategy or a validated human-comprehension interface.
+> **Claim boundary:** the repository contains computational, grounded-language, and analytic results. It does **not** establish an optimal human reading strategy or a validated human-comprehension interface.
 
-## Core model
+## Core principle
 
-A reader or agent maintains
+A reader or agent maintains:
 
-- the current context,
-- a bounded frontier of unresolved items,
+- the current context;
+- a bounded frontier of unresolved items;
 - a remaining time/action budget.
 
-The key actions are:
+The main actions are `READ` and `ASK(q)`.
 
-`READ` — continue acquiring context,
+The working principle is:
 
-`ASK(q)` — resolve one unresolved item.
-
-The central decision is an optimal-stopping comparison:
-
-`ASK(q) iff value(resolve q now) > value(defer q and keep reading)`.
+> **Resolve an uncertainty only when the expected value of resolving it now exceeds the expected value of deferring it.**
 
 Deferral has positive option value because later context can resolve an unknown for free, reveal that it is unimportant, or make a later query better targeted.
 
@@ -30,16 +26,16 @@ Deferral has positive option value because later context can resolve an unknown 
 
 ### Controlled hypertext
 
-A short-lived deferred frontier plus **trajectory/downstream utility** was consistently stronger than purely local value in the controlled spectral bridge. AP-S43 reproduced a compact top-4 one-shot policy:
+A short-lived deferred frontier plus **trajectory/downstream utility** was stronger than purely local value in the controlled spectral bridge. AP-S43 reproduced a compact one-shot policy:
 
 - S@16: **+3.9167 pp**, 95% CI **[+3.133,+4.683]**;
 - S@32: **+1.1500 pp**, 95% CI **[+0.250,+2.067]**.
 
-The number four is environment-specific, not a human working-memory claim.
+The tested capacity values are environment-specific; they are not claims about human working-memory constants.
 
 ### Real Wikispeedia
 
-Real navigation showed strong short-range branch correction, but deployable visible trigger policies often failed despite large oracle opportunity. This exposed an important distinction:
+Real navigation showed strong short-range branch correction, while deployable visible trigger policies often failed despite large oracle opportunity. This exposed an important distinction:
 
 > **The optimal action may exist while the visible state is insufficient to identify it.**
 
@@ -67,65 +63,66 @@ This supports the general prediction that scheduling matters most when the infor
 
 For a known recursive query tree, each query `q` has cost `c_q`, reward `r_q`, and children revealed after querying. The exact full-information problem is a precedence-constrained tree knapsack and can be solved by dynamic programming.
 
-The correct object is a **budget-conditioned recursive value curve** `V(q,b)`, not one static importance scalar.
+The key theoretical object is a **budget-conditioned recursive value curve** `V(q,b)`, not one static importance scalar.
+
+The main research question is therefore now:
+
+> **How closely can a bounded, partially observed reader or agent approximate the analytic full-information oracle?**
 
 See [`docs/ANALYTIC_THEORY.md`](docs/ANALYTIC_THEORY.md).
 
-## Interface implication
+## Interface proposal
 
-The theory suggests that users should not be required to estimate importance manually.
+The theory also yields a concrete, but not yet human-validated, interface proposal.
 
-A better reading/chat interface can:
+Users should not have to estimate the importance of every unclear term themselves. A reading assistant can:
 
-1. predict high-downstream-value terms or passages;
-2. emphasize them visually, e.g. restrained bold/underline/markers;
-3. allow one-click context-conditioned questions;
-4. keep unresolved items in a deferred frontier rather than opening every explanation immediately;
-5. reprioritize or retire items as later context arrives;
-6. choose not only **what** and **when** to explain, but **how deeply**.
+1. estimate which terms or passages have high downstream dependency;
+2. use restrained visual emphasis such as bold, underline, or margin markers;
+3. make context-conditioned explanation available with one action;
+4. **not** automatically interrupt reading with every explanation;
+5. retain unresolved items in a deferred frontier;
+6. reprioritize or retire them as later context arrives;
+7. use chat as the explanation channel while returning new follow-up unknowns to the frontier;
+8. adapt explanation depth to the importance of the concept.
 
-This points beyond ordinary linear chat toward:
+A plausible layout is:
 
-`main reading stream + AI-ranked unresolved frontier + chat/explanation channel`.
+`main document + AI-guided salience + unresolved frontier + chat/explanation channel`
 
-See [`docs/INTERFACE_IMPLICATIONS.md`](docs/INTERFACE_IMPLICATIONS.md).
+The detailed proposal, including a minimal prototype and testable UI hypotheses, is in [`docs/INTERFACE_PROPOSAL.md`](docs/INTERFACE_PROPOSAL.md).
 
-## Current research interpretation
+## Theory-following sanity check
 
-The project is no longer mainly asking:
+AP-T1 uses exact dynamic programming on small random recursive trees as a sanity check of consequences already implied by the analytic model.
 
-> Which heuristic should we try next?
+Across 200 trees it verified:
 
-It is now asking:
+- value is monotone in budget;
+- value is monotone in frontier capacity;
+- the full oracle is never worse than immediate greedy;
+- policy differences disappear once budget is sufficient to perform all useful work;
+- the single-unknown defer/resolve threshold produced zero contradictions in 144 enumerated checks.
 
-> **How closely can a bounded, partially observed reader/agent approximate the analytic full-information oracle?**
+This is a mathematical/computational consistency check, not evidence about human comprehension.
 
-The remaining variables are principally:
+## Current stopping point
 
-- observability of downstream importance,
-- contextual self-resolution,
-- bounded frontier capacity,
-- asynchronous latency,
-- stochastic / hallucinating answers,
-- interface costs and human cognitive load.
+The current computational phase has a reasonable stopping point here. Additional broad parameter sweeps are unlikely to add much.
 
-## Minimal remaining work
+The main optional external-validity test, if pursued later, is a small human interface study comparing ordinary document+chat with AI-guided salience and a deferred unresolved frontier.
 
-The project is close to a reasonable stopping point for the current computational phase. The highest-value remaining work is deliberately small:
-
-1. analytic sanity checks / propositions for defer-vs-resolve thresholds and budget saturation;
-2. one minimal generative-LM transfer check if execution infrastructure permits;
-3. one small interface study comparing ordinary chat with AI highlighting + deferred frontier;
-4. public synthesis rather than another broad parameter sweep.
+That study is **future validation**, not required to make the current computational and analytic results available.
 
 ## Repository map
 
 - `docs/ANALYTIC_THEORY.md` — Bellman/tree-knapsack formulation and current theoretical interpretation.
-- `docs/INTERFACE_IMPLICATIONS.md` — implications for highlighting, deferred questions, frontier chat, and future reading interfaces.
-- `docs/RESEARCH_SUMMARY.md` — historical evolution of the experimental program.
-- `docs/HUMAN_READING_HYPOTHESIS.md` — cautious human-reading translation and proposed study.
+- `docs/INTERFACE_PROPOSAL.md` — concrete reading/chat UI proposal derived from the theory.
+- `docs/RESEARCH_SUMMARY.md` — historical evolution of the experimental program and claim boundaries.
+- `docs/HUMAN_READING_HYPOTHESIS.md` — cautious translation to human reading and possible validation study.
 - `docs/EXPERIMENT_TIMELINE.md` — timeline of decisive experiments.
-- `results/` — selected machine-readable confirmatory results.
+- `experiments/` — experiment and sanity-check code.
+- `results/` — selected machine-readable results.
 
 ## Reproducibility and boundary
 
@@ -139,8 +136,8 @@ Repository code and original text are MIT-licensed unless otherwise noted. Third
 
 ## 日本語要約
 
-この研究で見えてきた中心原理は、**「分からないものを見つけた瞬間に全部解決する」のではなく、まず読み続け、文脈で自然解決する可能性を残し、それでも下流の理解に重要になったものだけを必要な時点で問い合わせる**というものです。
+この研究で見えてきた中心原理は、**分からないものを見つけた瞬間に全部解決するのではなく、まず読み続け、文脈で自然解決する可能性を残し、それでも下流の理解に重要になったものだけを必要な時点で問い合わせる**というものです。
 
-さらに重要度判定まで読者だけに任せる必要はありません。AIが下流依存の大きそうな語句を太字・下線などで控えめに強調し、質問候補を保留frontierに保存し、後続文脈に応じて重要度を更新するインターフェースが自然に導かれます。
+重要度判定まで読者だけに任せる必要もありません。AIが後続理解への依存度が高そうな語句を控えめに強調し、質問候補を保留frontierに保存し、後続文脈に応じて重要度を更新するUIを提案できます。ただし、このUIの人間に対する効果はまだ直接検証していません。
 
-したがって将来像は、単なる一本道のチャットではなく、**本文 + AI重要度表示 + 保留質問frontier + チャット**です。現在の研究フェーズは、この方策をさらに実験で探索する段階から、解析的oracleを定義し、そのoracleを限られた観測・記憶・計算でどこまで近似できるかを調べる段階へ移っています。
+研究の現在地は、heuristicをさらに探索する段階ではなく、解析的oracleを定義し、そのoracleを限られた観測・記憶・計算でどこまで近似できるかを考える段階です。
