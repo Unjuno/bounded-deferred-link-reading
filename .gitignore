@@ -1,0 +1,17 @@
+# Generated experiment artifacts and downloaded third-party data
+artifacts/
+**/raw/
+*.tar.gz
+*.zip
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local environment / editor files
+.env
+.env.*
+.DS_Store
+.ipynb_checkpoints/
