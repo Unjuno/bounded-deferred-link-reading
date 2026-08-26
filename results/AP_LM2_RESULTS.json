@@ -1,0 +1,58 @@
+{
+  "name": "AP-LM2 asynchronous slack-aware recursive query scheduling",
+  "fit_seed": 26082602,
+  "fit_episodes": 700,
+  "teacher_rows": 58499,
+  "test_seeds": [920001,920002,920003,920004,920005,920006,920007,920008,920009,920010,920011,920012],
+  "episodes_per_seed": 200,
+  "horizons": [24,40],
+  "aggregate": {
+    "24": {
+      "dfs": {"mean_oracle_fraction": 0.5261407405616734, "mean_retained": 4.228750977032227},
+      "rawgreedy": {"mean_oracle_fraction": 0.5633604432088722, "mean_retained": 4.1895662080974585},
+      "effgreedy": {"mean_oracle_fraction": 0.5676043812126286, "mean_retained": 4.189119092712843},
+      "rawrec": {"mean_oracle_fraction": 0.6591638174197189, "mean_retained": 4.259967208139083},
+      "rec": {"mean_oracle_fraction": 0.6880278629593302, "mean_retained": 4.121315598174973},
+      "imm": {"mean_oracle_fraction": 0.6680778260187639, "mean_retained": 4.0657078014578},
+      "k2": {"mean_oracle_fraction": 0.6653749872572375, "mean_retained": 1.3138192340067343},
+      "k4": {"mean_oracle_fraction": 0.6882193248814986, "mean_retained": 2.5878726689976688},
+      "k8": {"mean_oracle_fraction": 0.6881796171886924, "mean_retained": 4.022600882335257},
+      "k16": {"mean_oracle_fraction": 0.6880278629593302, "mean_retained": 4.121315598174973},
+      "adapt": {"mean_oracle_fraction": 0.688367120200502, "mean_retained": 3.2915330762987014}
+    },
+    "40": {
+      "dfs": {"mean_oracle_fraction": 0.5207074652116072, "mean_retained": 4.17776431977859},
+      "rawgreedy": {"mean_oracle_fraction": 0.5545323009851756, "mean_retained": 4.183030881762645},
+      "effgreedy": {"mean_oracle_fraction": 0.5598992921195595, "mean_retained": 4.1834696269645955},
+      "rawrec": {"mean_oracle_fraction": 0.6523081270448816, "mean_retained": 4.152107132762319},
+      "rec": {"mean_oracle_fraction": 0.6855408518736062, "mean_retained": 4.017380497557211},
+      "imm": {"mean_oracle_fraction": 0.6777952072885656, "mean_retained": 3.966130407049235},
+      "k2": {"mean_oracle_fraction": 0.6661512241165392, "mean_retained": 1.2790472895160396},
+      "k4": {"mean_oracle_fraction": 0.6864082758682465, "mean_retained": 2.3670347973821273},
+      "k8": {"mean_oracle_fraction": 0.6856502070799326, "mean_retained": 3.8868373745295663},
+      "k16": {"mean_oracle_fraction": 0.6855408518736062, "mean_retained": 4.017380497557211},
+      "adapt": {"mean_oracle_fraction": 0.685597685854781, "mean_retained": 3.2023850371585474}
+    }
+  },
+  "h1_slack_vs_raw_h24": {"mean": 0.028864045539611204, "ci95": [0.01941814900978449,0.03840729567820338], "positive_seeds": 12},
+  "h1_long_h40": {"mean": 0.033232724828724546, "ci95": [0.026805506794737095,0.03962598358493661], "positive_seeds": 12},
+  "h2_recursive_vs_immediate_h24": {"mean": 0.01995003694056624, "ci95": [0.013940203723354642,0.02553334806608453], "positive_seeds": 11},
+  "h2_long_h40": {"mean": 0.0077456445850405216, "ci95": [0.0020368346365272766,0.013318012204135735], "positive_seeds": 9},
+  "slack_recursive_vs_effective_greedy_h24": {"mean": 0.12042348174670152, "ci95": [0.1136266173842228,0.12699954928959745], "positive_seeds": 12},
+  "capacity_full_minus_k": {
+    "2": {"24": {"mean_full_minus_k": 0.02265287570209265}, "40": {"mean_full_minus_k": 0.019389627757067023}},
+    "4": {"24": {"mean_full_minus_k": -0.0001914619221684936}, "40": {"mean_full_minus_k": -0.0008674239946402281}},
+    "8": {"24": {"mean_full_minus_k": -0.00015175422936216285}, "40": {"mean_full_minus_k": -0.0001093552063264891}},
+    "16": {"24": {"mean_full_minus_k": 0.0}, "40": {"mean_full_minus_k": 0.0}}
+  },
+  "minimal_k_within_1pp_of_full_at_both_horizons": 4,
+  "adaptive": {
+    "24": {"k8_minus_adaptive_performance": {"mean": -0.00018750301180970688, "ci95": [-0.001575019138197191,0.001165035643066718]}, "k8_mean_retained": 4.022600882335257, "adaptive_mean_retained": 3.2915330762987014, "memory_reduction_fraction": 0.18174007996839747},
+    "40": {"k8_minus_adaptive_performance": {"mean": 5.252122515177667e-05, "ci95": [-0.0007453117150202784,0.0008081014821398161]}, "k8_mean_retained": 3.8868373745295663, "adaptive_mean_retained": 3.2023850371585474, "memory_reduction_fraction": 0.17609492536431626}
+  },
+  "pass_h1": true,
+  "pass_h2": true,
+  "adaptive_resource_success": true,
+  "decision": "PASS",
+  "boundaries": ["hallucination=0","noisy synthetic slack cue","one query server","non-idling policy class","not human comprehension","development seeds 280001..280005 excluded"]
+}
