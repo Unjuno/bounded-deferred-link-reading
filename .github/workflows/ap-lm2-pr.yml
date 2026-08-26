@@ -1,0 +1,31 @@
+name: AP-LM2 monitored async slack
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'experiments/ap_lm2_async_slack.py'
+      - 'docs/AP_LM2_ASYNC_SLACK_PLAN.md'
+      - '.github/workflows/ap-lm2-pr.yml'
+  workflow_dispatch:
+
+jobs:
+  ap-lm2-monitor:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip numpy scikit-learn
+      - name: Run AP-LM2
+        run: PYTHONPATH=. python experiments/ap_lm2_async_slack.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ap-lm2-monitored-results
+          path: |
+            artifacts/ap_lm2/AP_LM2_RESULTS.json
+            artifacts/ap_lm2/AP_LM2_SUMMARY.md
+          if-no-files-found: error
