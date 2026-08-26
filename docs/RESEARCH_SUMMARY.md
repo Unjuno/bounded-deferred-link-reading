@@ -2,124 +2,210 @@
 
 ## Research question
 
-The project asks whether an unknown hypertext can be read or navigated efficiently under tight memory and action budgets, and what minimal state is actually needed.
+This project began with a practical question:
 
-The research program deliberately separates two constructs:
+> When a reader encounters something potentially important but not yet understood, should it be resolved immediately or deferred while more context is acquired?
 
-- **Reading / information acquisition:** coverage of latent core information under a reading budget.
-- **Goal-directed navigation:** reaching an explicit target under a navigation budget, used later as a mechanism and stress-test environment.
+The work uses hypertext navigation, synthetic recursive-query environments, and grounded natural-language tasks as computational test beds. These environments are not direct measurements of human comprehension.
 
-Navigation results are therefore not automatically claims about human comprehension.
+Two constructs remain distinct throughout:
+
+- **reading / information acquisition** — acquiring useful information under limited time and attention;
+- **goal-directed navigation / query scheduling** — reaching a target or collecting useful information under an action budget.
 
 ## Evolution of the theory
 
-### Stage 1 — Local semantic scoring for information acquisition
+### Stage 1 — Context-sensitive local value
 
-Early experiments supported a compact additive representation using current-text relevance, anchor/link relevance, containing-sentence or paragraph relevance, and limited novelty. In the reading/information-acquisition construct, **containing context materially improved link-value estimation**. Larger recurrent, nonlinear, and global-memory models often improved intermediate predictors without improving the end-to-end objective.
+Early information-acquisition experiments supported compact semantic scoring and showed that containing context can improve the estimated value of a link or concept. Large recurrent/global state was not consistently necessary.
 
-### Stage 2 — Immediate-parent runner-up memory
+### Stage 2 — Short-lived deferred alternatives
 
-Under a controlled distance-like cue, retaining the immediate-parent runner-up was useful. Direct counterfactual utility calibration also replicated under controlled hidden-noise mixtures. This motivated, but did not ultimately support universally, a one-scalar-history hypothesis.
+Controlled navigation experiments initially suggested that retaining a recent runner-up could help. A later spectral/non-distance bridge showed that one scalar alternative was not universally sufficient.
 
-### Stage 3 — Cue-universality failure
+The theory therefore changed from “remember one runner-up” to “retain a small frontier of deferred options whose value is reevaluated after more context.”
 
-Under a spectral/non-distance bridge, immediate-parent runner-up memory could materially hurt. Margin recalibration did not rescue it. The theory changed from “one scalar history is sufficient” to **memory representation depends on the observation/value channel**.
+### Stage 3 — Downstream trajectory value
 
-### Stage 4 — Frontier oracle and trajectory utility
+Richer-frontier oracle experiments showed substantial unrealized opportunity, while local/myopic scores often failed to identify which deferred branch should be revisited.
 
-Richer abandoned-alternative frontiers contained large oracle value, but score-based and myopic value models could not recover it. The key distinction became:
+The important distinction became:
 
-> “this alternative is locally closer/better” is not equivalent to “returning to this alternative and then continuing with the same imperfect policy improves the final outcome.”
+> Local attractiveness is not the same as the value of taking an action and then continuing under the future policy.
 
-The teacher was therefore changed to counterfactual trajectory utility:
+This motivated trajectory-level counterfactual teachers.
 
-\[
-Y = S_B^{\mathrm{BACK}} - S_B^{\mathrm{CONTINUE}}.
-\]
+AP-S43 reproduced a compact spectral-bridge policy with a short-lived top-4 frontier and one discretionary reconsideration:
 
-This changed the deployable effect from negative to positive in the spectral bridge.
+- S@16: **+3.9167 pp**, 95% CI **[+3.133,+4.683]**;
+- S@32: **+1.1500 pp**, 95% CI **[+0.250,+2.067]**.
 
-### Stage 5 — Bounded-memory compression
+Later capacity/resource tests showed that the useful frontier could often be compressed substantially. The literal value `K=4` is environment-specific, not a human-memory claim.
 
-The richer-history policy was compressed to the immediately previous decision point, K=4 abandoned alternatives, one discretionary reconsideration, and a 3-feature Ridge model. AP-S43 froze this policy and replicated it on 12 new seeds × 500 tasks = 6,000 tasks:
+### Stage 4 — Real Wikispeedia and the observability bottleneck
 
-- S@16: **+3.9167 pp**, 95% CI **[+3.133,+4.683] pp**, 12/12 seeds positive.
-- S@32: **+1.1500 pp**, 95% CI **[+0.250,+2.067] pp**, 9/12 seeds positive.
+The project then moved to real Wikispeedia paths, HTML, anchors, paragraphs, and article-body semantics.
 
-K=7 or K=9 did not materially improve over K=4. Multi-page delayed retention was not supported. A resource-saving adaptive cap reduced candidate memory by about 20.9% at a cost of about 0.4 pp.
+Observationally, successful human paths showed strong target-directed semantic progress, and BACK behavior was predominantly short-range. One-step returns followed by replacement branches were associated with semantic correction.
 
-### Stage 6 — Real human Wikispeedia semantics
+However, deployable causal policies transferred much less cleanly.
 
-The next phase moved from surrogate policy environments to real human Wikispeedia paths.
+AP-RS5, using an equal anchor/context semantic scorer, failed its preregistered +2 pp criterion. At the same time, anchor-only navigation was substantially stronger than the equal anchor/context mixture for explicit-target navigation.
 
-AP-RS3 showed strong target-directed progress using complete article-title embeddings. AP-RS4 upgraded the outcome space to **actual Wikispeedia article-body semantics** and excluded the terminal target transition.
+Subsequent trigger experiments sharpened the main problem:
 
-AP-RS4 findings:
+- there can be large oracle opportunity;
+- a useful alternative can exist;
+- but visible semantic state may still be insufficient to identify the correct intervention reliably.
 
-- 28,182 successful human paths showed strong positive nonterminal body-semantic progress; **96.36%** of paths had positive mean progress.
-- In 4,301 first eligible nonterminal BACK episodes, returning to the ancestor itself moved away from the target on average, but the replacement branch moved **+0.0291** in body-semantic similarity relative to the abandoned branch; the preregistered average-effect criterion passed.
-- The episode-level effect is heterogeneous; the raw positive fraction was only **51.08%**.
+AP-RS13 is a representative case: a large K=1 oracle opportunity remained, but the visible semantic trigger policy hurt held-out performance.
 
-Exploratory AP-RS4c/4e analyses sharpened the mechanism:
+AP-RS14 selected no intervention under a more robust sparse trigger.
 
-- **85.1%** of first eligible BACK episodes were one-step returns; **96.0%** were within two steps.
-- One-step replacement correction averaged **+0.0348**, whereas two-or-more-step correction averaged approximately zero/negative; target-matched sensitivity retained a positive one-step advantage.
-- When the immediately preceding forward click was itself a body-semantic regression, the subsequent replacement correction was very large (**+0.0927** on average). When the preceding click had already improved target similarity, replacement-vs-abandoned was slightly negative on average.
+AP-RS15 added body-prefetch information, but observability improved only slightly and the calibrated policy again selected no intervention despite large K=1 oracle opportunity.
 
-These are observational human-navigation results. They support a **short-range branch-correction pattern**, not a human working-memory mechanism.
+The key lesson was therefore an **observability bottleneck** rather than a lack of potential value.
 
-### Stage 7 — First causal real anchor/context gate: AP-RS5
+### Stage 5 — Recursive LM-style querying: AP-LM1
 
-AP-RS5 used real Wikispeedia HTML, real hyperlink topology, and mission pairs from the human task distribution. Candidate actions were scored using a frozen MiniLM mixture of **0.5 anchor text + 0.5 containing paragraph**. Fit/tune/test targets were disjoint, and test contained 1,200 missions.
+The research then generalized from fixed links to recursive queries, where an answer can itself reveal new unresolved items.
 
-The preregistered bounded-deferred policy **FAILED**:
+A recursive query is therefore not just `q -> answer`; it exposes a subtree of future information-acquisition opportunities.
 
-- equal anchor/context local S@16: **0.7425**
-- bounded policy S@16: **0.7475**
-- delta: **+0.50 pp**, target-cluster CI approximately **[-0.43,+1.45] pp**
-- equal local S@32: **0.8275**
-- bounded policy S@32: **0.8325**
-- delta: **+0.50 pp**
+AP-LM1 compared local/visible policies with a teacher that predicted exact frozen-subtree opportunity value.
 
-The +2 pp early-budget threshold, positive-CI threshold, and 6/8 target-bucket threshold all failed. Long-horizon safety passed.
+Held-out results:
 
-A major construct-specific scorer result also emerged:
+- B=16: recursive learned policy vs visible greedy **+4.765 pp**, CI **[+4.449,+5.078]**, 12/12 seeds positive;
+- B=32: **+7.034 pp**, CI **[+6.531,+7.546]**;
+- latency-aware prediction added a smaller but clear benefit;
+- K=8 was the smallest tested frontier within 1 pp of full at both budgets.
 
-- **anchor-only local:** S@16 **0.7908**, S@32 **0.8458**
-- equal anchor/context local: S@16 0.7425, S@32 0.8275
-- context-only local: S@16 0.3808, S@32 0.5333
+This established that, in a recursive setting, **downstream subtree value** can matter materially beyond immediate visible value.
 
-Thus, on **explicit target navigation**, containing paragraph context diluted a very strong anchor-target signal. This does **not** overturn the earlier reading/information-acquisition result that context is useful; it strengthens the need to keep the two constructs separate.
+### Stage 6 — Async/slack-aware querying: AP-LM2
 
-Implementation audit: one AP-RS5 gate feature (`candidate_outdegree`) uses metadata from an unvisited candidate page, so RS5 is best described as **graph-assisted real-semantic** rather than strictly human-visible. AP-RS6 was specified before reading the RS5 outcome to remove that feature.
+AP-LM2 added the possibility that reading/work can continue while a query is pending.
+
+The relevant cost is then not raw latency alone but the amount of latency that actually blocks useful work.
+
+Held-out results supported:
+
+- slack-aware scheduling over latency-only scheduling;
+- recursive-subtree teacher over a matched immediate-value teacher;
+- compact frontier approximations;
+- adaptive capacity that reduced retained state with little performance loss.
+
+This strengthened the view that query value depends on both downstream information and timing.
+
+### Stage 7 — Grounded natural-language transfer: AP-LM3B
+
+AP-LM3A was treated only as development provenance because an implementation audit found that pre-query latency depended on hidden answer length.
+
+AP-LM3B corrected the cost model so only visible query text determined pre-query cost and then ran a fresh held-out confirmation on grounded natural-language recursive answer trees.
+
+Held-out sample:
+
+- **1,197 missions**;
+- **753 target clusters**.
+
+At B=12:
+
+- recursive vs matched immediate: **+3.112 pp**, CI **[+2.292,+3.951]**, 8/8 buckets positive;
+- recursive vs visible greedy: **+3.109 pp**, CI **[+2.238,+4.010]**, 8/8 buckets positive.
+
+Capacity audit:
+
+- K=8 was within **0.551 pp** of full;
+- K=4 was substantially below full in this natural-language construction.
+
+At B=20, the main policies were essentially saturated near oracle, showing that scheduling differences vanish when the budget is no longer binding.
+
+### Stage 8 — Analytic synthesis
+
+At this point the recurring policy pattern was stable enough that continued broad heuristic search had diminishing value.
+
+The problem can be written directly as an optimal-control problem.
+
+For one unresolved item `q` in state `s`, the key comparison is:
+
+`resolve q now` vs `defer q and continue reading`.
+
+The working stopping rule is:
+
+`ASK(q) iff expected_value(resolve now) > expected_value(defer)`.
+
+For a known recursive query tree with integer costs, the exact full-information problem is a precedence-constrained tree knapsack and can be solved by dynamic programming.
+
+The correct value object is therefore a **budget-conditioned recursive value curve** `V(q,b)`, not one static importance scalar.
+
+The research question has consequently shifted from:
+
+> Which heuristic should we try next?
+
+into:
+
+> **How closely can a bounded, partially observed reader or agent approximate the analytic full-information oracle?**
+
+See `docs/ANALYTIC_THEORY.md`.
+
+## Theory-following sanity check: AP-T1
+
+AP-T1 is not a new discovery experiment. It checks finite-state consequences of the analytic model on 200 small random recursive trees.
+
+It verified:
+
+- monotonicity in budget;
+- monotonicity in frontier capacity;
+- full oracle >= immediate greedy;
+- saturation when the budget permits all useful work;
+- zero contradictions in 144 enumerated single-unknown defer/resolve threshold checks.
+
+This is a consistency check of the analytic formulation, not evidence about human cognition.
 
 ## Current scientific position
 
-### Supported
+### Supported by the computational program
 
-- In reading/information-acquisition experiments, anchor semantics are more useful when combined with containing context.
-- In explicit target navigation, the best local semantic channel can differ; AP-RS5 strongly favored anchor-only scoring.
-- One abandoned alternative is not universally sufficient.
-- In the spectral bridge, a short-lived top-4 buffer plus one-shot trajectory utility is a reproducible compact policy.
-- Real successful human Wikispeedia paths show strong body-semantic target progress.
-- Human BACK behavior is predominantly short-range, and short-range BACK followed by branch replacement is associated with semantic correction.
-- A generic real-semantic bounded-deferred policy using the frozen equal anchor/context scorer did **not** meet the causal transfer criterion in AP-RS5.
+- Immediate resolution of every uncertainty is not generally necessary for good bounded information acquisition.
+- Deferring an option can have positive value because later context changes its estimated usefulness.
+- Local relevance and downstream/trajectory value are distinct.
+- Recursive answer generation makes downstream subtree value especially important.
+- Query scheduling matters most when the information budget is binding.
+- Useful full-information actions can exist even when visible state is insufficient to identify them reliably.
+- Small bounded frontiers can often approximate much richer history, although the required capacity is environment-dependent.
+- Async scheduling should account for effective blocking/slack, not only raw latency.
 
 ### Not established
 
-- That K=4 is a human working-memory constant.
-- That bounded deferred links improve human comprehension or retention.
-- That the AP-S43 compact policy transfers to real visible semantics.
-- That context should always be added to anchor text for explicit target navigation.
-- That observed human BACK correction is caused by a bounded option buffer.
-- That this is an optimal human hyperlink-reading strategy.
+- An optimal human reading strategy.
+- A universal human memory capacity such as K=4 or K=8.
+- A causal claim that observed human BACK behavior is generated by deferred-option memory.
+- A validated human-comprehension benefit from AI highlighting or deferred-frontier UI.
+- Reliable handling of hallucinating/stochastic generative answers in the full real-LM setting.
 
-## Active external-validity tests
+## Interface proposal
 
-- **AP-RS6:** strictly visible-only equal anchor/context gate; removes unvisited candidate metadata.
-- **AP-RS7:** target-matched finished-vs-unfinished human BACK body-semantic correction.
-- **AP-RS8:** visible anchor-only local baseline plus bounded one-shot reconsideration; tests whether deferred memory adds value when the local semantic channel is already strong.
+The theory suggests a concrete interface direction without claiming that it has already been validated in humans:
 
-## Human and agent-assistance frontier
+- AI estimates which unclear spans have high downstream importance;
+- important candidates receive restrained emphasis such as bold/underline/markers;
+- explanations remain optional rather than automatically interrupting reading;
+- unresolved items are stored in an external frontier and reprioritized as context grows;
+- chat is used as a context-conditioned explanation channel;
+- new unknowns introduced by an answer return to the frontier rather than forcing depth-first recursive chat;
+- explanation depth adapts to downstream importance.
 
-A later human/agent experiment should separate at least four information regimes: unaided reading, external short-term buffer only, agent reranking of retained links, and agent prefetch/summarization of destination pages. Prefetch changes the information regime and should not be conflated with simple memory offloading.
+See `docs/INTERFACE_PROPOSAL.md` for the concrete proposal and its validation boundary.
+
+## Current stopping point
+
+The broad computational exploration phase is complete enough to stop without another large parameter sweep.
+
+The main remaining work is theoretical or external-validity work:
+
+- formal properties and approximation guarantees for the analytic control problem;
+- optional stochastic/hallucinating-answer extensions;
+- if desired, one small human-interface validation study.
+
+These are follow-up directions, not prerequisites for preserving the current results as a completed computational research phase.
