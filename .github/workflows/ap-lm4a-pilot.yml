@@ -1,6 +1,13 @@
 name: AP-LM4A generative answer-tree pilot
 
 on:
+  push:
+    branches:
+      - 'ap-lm4a-generative-tree-pilot'
+    paths:
+      - 'experiments/ap_lm4a_generative_tree.py'
+      - 'prereg/AP_LM4A_GENERATIVE_TREE_PILOT.md'
+      - '.github/workflows/ap-lm4a-pilot.yml'
   pull_request:
     paths:
       - 'experiments/ap_lm4a_generative_tree.py'
