@@ -1,0 +1,21 @@
+{
+  "name": "AP-T1 exact analytic sanity checks",
+  "seed": 20260827,
+  "n_random_trees": 200,
+  "checks": {
+    "budget_value_monotone": true,
+    "capacity_value_monotone_K1_to_K4": true,
+    "full_oracle_ge_immediate_greedy": true,
+    "all_work_conserving_policies_saturate_at_total_cost": true,
+    "single_unknown_threshold_checks": 144,
+    "single_unknown_threshold_failures": 0
+  },
+  "mean_relative_full_minus_immediate_greedy": 0.03448813304891392,
+  "mean_relative_full_minus_K": {
+    "1": 0.23573543862647456,
+    "2": 0.01347154955002002,
+    "3": 0.0020170311830907794,
+    "4": 0.00009129151523652196
+  },
+  "interpretation": "Sanity check only: verifies finite-state consequences of the analytic model; not evidence about human comprehension or LM factuality."
+}
