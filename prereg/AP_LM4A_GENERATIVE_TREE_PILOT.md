@@ -2,6 +2,10 @@
 
 Date: 2026-08-27 JST
 
+## Pre-execution amendment
+
+Before any LM generation or outcome evaluation, the maximum tree size was corrected from 9 to 15 nodes. With 3 roots and 2 children per root, a 9-node cap would be exhausted at depth 1 and would make the preregistered depth-2 expansion effectively unreachable. No data had been generated when this correction was made. All other settings are unchanged.
+
 ## Purpose
 
 Test whether the AP-LM3B recursive downstream-value advantage survives when answers and follow-up questions are produced by an actual generative language model rather than by retrieval-backed Wikipedia bodies and graph links.
@@ -39,7 +43,7 @@ Use the existing Wikispeedia corpus and target-disjoint partition logic.
 - initial roots per mission: 3 visible outgoing article-title queries chosen using the existing visible anchor/title-to-target-title ranking
 - maximum generated depth: 2 (root depth 0 plus two generated follow-up levels)
 - maximum children per queried node: 2
-- maximum nodes per mission: 9
+- maximum nodes per mission: 15
 
 ## Query and cost visibility
 
