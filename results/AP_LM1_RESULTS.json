@@ -1,0 +1,56 @@
+{
+  "name": "AP-LM1 recursive deferred-query frontier",
+  "construct": "recursive LM-like querying with perfect answers, serial latency, and answer-generated unknowns",
+  "fit_seed": 26082601,
+  "fit_episodes": 1200,
+  "teacher_rows": 186021,
+  "test_seeds": [910001,910002,910003,910004,910005,910006,910007,910008,910009,910010,910011,910012],
+  "episodes_per_seed": 300,
+  "budgets": [16,32],
+  "k_values": [1,2,4,8,16],
+  "aggregate": {
+    "16": {
+      "greedy_visible": {"mean_oracle_fraction": 0.6607051754229046, "mean_reward": 17.837451370811525},
+      "learned_full_aware": {"mean_oracle_fraction": 0.7083557877664026, "mean_reward": 19.296118101557465},
+      "learned_full_no_latency": {"mean_oracle_fraction": 0.6941030108292101, "mean_reward": 18.904558484665134},
+      "learned_k1_aware": {"mean_oracle_fraction": 0.28021028551199223, "mean_reward": 7.710802859095931},
+      "learned_k2_aware": {"mean_oracle_fraction": 0.5469643694610311, "mean_reward": 15.110353700113711},
+      "learned_k4_aware": {"mean_oracle_fraction": 0.6927920375532153, "mean_reward": 18.874206982219945},
+      "learned_k8_aware": {"mean_oracle_fraction": 0.7074214735505936, "mean_reward": 19.26774902022947},
+      "learned_k16_aware": {"mean_oracle_fraction": 0.7083557877664026, "mean_reward": 19.296118101557465},
+      "recursive_dfs": {"mean_oracle_fraction": 0.6270923856331302, "mean_reward": 16.560615058055365}
+    },
+    "32": {
+      "greedy_visible": {"mean_oracle_fraction": 0.730492700258, "mean_reward": 32.04021607248941},
+      "learned_full_aware": {"mean_oracle_fraction": 0.8008300095408599, "mean_reward": 35.63944194278008},
+      "learned_full_no_latency": {"mean_oracle_fraction": 0.7895805411665524, "mean_reward": 35.17202267731883},
+      "learned_k1_aware": {"mean_oracle_fraction": 0.1733975896413734, "mean_reward": 7.724310720543935},
+      "learned_k2_aware": {"mean_oracle_fraction": 0.38437171362229733, "mean_reward": 17.288320162431923},
+      "learned_k4_aware": {"mean_oracle_fraction": 0.7223720636206392, "mean_reward": 32.295279252497124},
+      "learned_k8_aware": {"mean_oracle_fraction": 0.799471317386873, "mean_reward": 35.57778046394839},
+      "learned_k16_aware": {"mean_oracle_fraction": 0.80081152091688, "mean_reward": 35.638193731769235},
+      "recursive_dfs": {"mean_oracle_fraction": 0.6997880974156144, "mean_reward": 30.18447577660195}
+    }
+  },
+  "h1_full_aware_vs_greedy_b16": {"mean": 0.04765061234349808, "ci95": [0.04448724700968083,0.0507842689426288], "positive_seeds": 12},
+  "long_horizon_full_aware_vs_greedy_b32": {"mean": 0.07033730928285996, "ci95": [0.06531220176344878,0.07546334430743568], "positive_seeds": 12},
+  "latency_ablation_b16": {"mean": 0.014252776937192568, "ci95": [0.013006915961832727,0.015467571292652624], "positive_seeds": 12},
+  "latency_ablation_b32": {"mean": 0.011249468374307505, "ci95": [0.010151521177763568,0.012499132640043667], "positive_seeds": 12},
+  "capacity_full_minus_k": {
+    "1": {"16": 0.42814550225441045, "32": 0.6274324198994865},
+    "2": {"16": 0.16139141830537163, "32": 0.4164582959185626},
+    "4": {"16": 0.01556375021318738, "32": 0.07845794592022072},
+    "8": {"16": 0.000934314215809029, "32": 0.0013586921539868273},
+    "16": {"16": 0.0, "32": 0.00001848862397990647}
+  },
+  "minimal_k_within_1pp_of_full_at_both_budgets": 8,
+  "pass_h1": true,
+  "pass_latency_ablation": true,
+  "decision": "PASS",
+  "boundaries": [
+    "Hallucination is fixed to zero; this isolates recursive query selection and latency.",
+    "Latency is serial query cost in AP-LM1; asynchronous overlap/slack is deferred to AP-LM2.",
+    "Synthetic useful-information reward is not a human comprehension measure.",
+    "Development pilot results are not included in confirmatory test seeds."
+  ]
+}
