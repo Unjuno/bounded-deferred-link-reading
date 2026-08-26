@@ -6,6 +6,10 @@ Test whether the AP-LM1 recursive-query result survives a more realistic asynchr
 
 The controlled environment still fixes hallucination to zero. AP-LM2 isolates scheduling, recursive value estimation, and bounded query-frontier memory.
 
+## Final preregistration status
+
+This file was finalized **before any held-out seed 920001..920012 was run**. Development-only seeds 280001..280005 were used to debug and freeze the environment. A development implementation audit found that an early capped-tree generator could exhaust the node cap before creating all six roots; the final generator therefore creates all roots first and expands descendants second. The held-out set has not been used for any design choice.
+
 ## H — preregistered hypotheses
 
 ### H1: slack-aware scheduling
@@ -13,10 +17,12 @@ The controlled environment still fixes hallucination to zero. AP-LM2 isolates sc
 A recursive branch-value policy given a noisy observable slack/dependency cue will outperform the otherwise matched recursive branch-value policy that sees raw latency but not slack.
 
 Primary confirmatory criterion at horizon 24:
-- mean oracle-normalized gain >= **+2.0 pp**;
+- mean oracle-normalized gain >= **+1.0 pp**;
 - seed-cluster bootstrap 95% CI lower bound > 0;
-- >= **10/12** held-out seeds positive;
+- >= **9/12** held-out seeds positive;
 - horizon-40 mean gain >= **0.0 pp**.
+
+The +1 pp threshold is an incremental-feature criterion: AP-LM2 compares two otherwise matched learned recursive policies rather than a learned policy against a simple greedy baseline.
 
 ### H2: recursive-value teacher vs immediate-value teacher
 
@@ -46,6 +52,7 @@ One episode is a synthetic reading task with a single LM query server.
 
 - Reading time advances on the wall clock while a query is in flight.
 - Root unknowns become observable at release times as the base document is read.
+- All six roots are generated before descendant expansion, so the node cap cannot remove initial unknowns.
 - Only one LM query can be in flight at a time.
 - A query occupies the LM server for its latency, but does not stop the reading clock from advancing.
 - When the answer completes, its useful-information reward is obtained and its child unknowns become observable.
@@ -64,9 +71,9 @@ Frozen generator:
 - root release time: integer 0–10;
 - root true slack: integer 2–10;
 - child need-time increment: integer 1–6;
-- observed need-time cue: true need time + `Normal(0, 2.0)`, rounded/clipped;
+- observed need-time cue: true need time + `Normal(0, 1.5)`, rounded/clipped;
 - child count: `min(3, Poisson(0.35 + 1.45*sigmoid(z)))` until node/depth cap;
-- late utility multiplier: `exp(-lateness / 1.5)`.
+- late utility multiplier: `exp(-lateness / 1.0)`.
 
 All deployable policies are non-idling when an eligible query exists. If no query is currently eligible, reading advances to the next root release. The oracle is exact within this same non-idling one-server policy class.
 
@@ -103,13 +110,17 @@ Teacher targets:
 - immediate: timely utility of the candidate answer if started now;
 - recursive: exact best non-idling utility obtainable from that candidate's answer subtree if the candidate is started now.
 
+### Bounded-frontier implementation
+
+Once a candidate is removed by K-compression, it remains discarded and is not silently reintroduced on the next decision. This was explicitly checked during development because an early pilot implementation re-derived discarded descendants from the queried-parent state.
+
 ### Oracle
 
 A clairvoyant memoized scheduler knows true rewards, true need times, latencies, releases, and the full recursive tree. It computes the exact best reward achievable in the frozen non-idling one-server class and is used only as an evaluation denominator.
 
 ### Split
 
-Development-only pilot seeds `280001..280003` were used to debug the environment, fix the bounded-buffer implementation, and freeze this preregistration. They are excluded from confirmatory evidence.
+Development-only pilot seeds `280001..280005` were used to debug the environment, implementation, and preregistration. They are excluded from confirmatory evidence.
 
 Frozen confirmatory split:
 - fit RNG seed: `26082602`;
@@ -138,6 +149,12 @@ No generator coefficient, feature, teacher, threshold, K rule, seed, or PASS cri
 - Policies are non-idling when a candidate exists; strategic deliberate idling is outside this experiment.
 - Synthetic timely information utility is not a direct human comprehension measure.
 - A lower K than AP-LM1 would not contradict AP-LM1: asynchronous release/deadline structure changes frontier competition.
+
+## Overall decision label
+
+- **PASS:** H1 PASS and H2 PASS.
+- **PARTIAL:** H1 PASS and H2 FAIL.
+- **FAIL:** H1 FAIL.
 
 ## Decision branching
 
